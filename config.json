@@ -1,0 +1,46 @@
+{
+  "formatVersion": 1,
+  "menu": {
+    "authentication":{
+      "label": "Config.authentication",
+      "formFields": {
+        "isTestMode": {
+          "type": "selectBox",
+          "required": false,
+          "label": "Config.modeLabel",
+          "options": {
+            "defaultValue": "1",
+            "selectBoxValues": [
+              {
+                "value": "0",
+                "caption": "Config.modeProductive"
+              },
+              {
+                "value": "1",
+                "caption": "Config.modeTesting"
+              }
+            ]
+          }
+        },
+        "apiKeys.productive": {
+          "type": "inputText",
+          "required": false,
+          "label": "Config.productiveApiKey",
+          "options": {
+            "defaultValue": "",
+            "isPassword": true
+          }
+        },
+        "apiKeys.test": {
+          "type": "inputText",
+          "required": false,
+          "label": "Config.testApiKey",
+          "options": {
+            "defaultValue": "",
+            "isPassword": true
+          }
+        }
+      }
+    }
+  }
+}

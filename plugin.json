@@ -1,0 +1,39 @@
+{
+  "name": "Mollie",
+  "namespace": "Mollie",
+  "type": "payment",
+  "version": "1.0.0",
+  "license": "",
+  "isClosedSource": true,
+  "pluginIcon": "icon_plugin_xs.png",
+  "price": 0.00,
+  "description": "The official Mollie plugin for plentymarkets",
+  "shortDescription": {
+    "de": "Das offizielle Mollie-Plugin für den Webshop Ceres und andere Template-Plugins.",
+    "en": "The official Mollie plugin for the online store Ceres and other template plugins."
+  },
+  "categories": [
+    "3519"
+  ],
+  "keywords": [
+    "mollie",
+    "official",
+    "plentymarkets",
+    "payment"
+  ],
+  "author": "plentymarkets GmbH",
+  "authorIcon": "icon_author_xs.png",
+  "serviceProvider": "Mollie\\Providers\\ServiceProvider",
+  "containers": [],
+  "javaScriptFiles": [],
+  "require": [],
+  "dependencies": {
+    "mollie/mollie-api-php": "^2.0"
+  },
+  "runOnBuild": [
+    "Mollie\\Migrations\\CreateMethodSettingsTable"
+  ],
+  "dataProviders": [
+    {"key":"Mollie\\DataProviders\\ReInitPaymentComponent", "name":"Mollie Reinitialize Payment", "description": "Display the Mollie Button after the Payment changed to Mollie"}
+  ]
+}
