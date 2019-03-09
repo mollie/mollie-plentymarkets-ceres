@@ -4,8 +4,12 @@
   "type": "payment",
   "version": "1.0.0",
   "license": "",
-  "isClosedSource": true,
+  "author": "Frontend Studios GmbH",
+  "authorIcon": "icon_author_xs.png",
   "pluginIcon": "icon_plugin_xs.png",
+  "email": "dev@frontend-studios.de",
+  "phone": "+49 40 851 792 84 30",
+  "isClosedSource": true,
   "price": 0.00,
   "description": "The official Mollie plugin for plentymarkets",
   "shortDescription": {
@@ -21,8 +25,6 @@
     "plentymarkets",
     "payment"
   ],
-  "author": "plentymarkets GmbH",
-  "authorIcon": "icon_author_xs.png",
   "serviceProvider": "Mollie\\Providers\\ServiceProvider",
   "containers": [],
   "javaScriptFiles": [],
@@ -34,6 +36,6 @@
     "Mollie\\Migrations\\CreateMethodSettingsTable"
   ],
   "dataProviders": [
-    {"key":"Mollie\\DataProviders\\ReInitPaymentComponent", "name":"Mollie Reinitialize Payment", "description": "Display the Mollie Button after the Payment changed to Mollie"}
+    {"key":"Mollie\\DataProviders\\ReInitPaymentComponent", "name":"Payment button", "description": "Display the Mollie payment button"}
   ]
 }

@@ -76,7 +76,7 @@ class ApiOrderFactory
             'locale'          => $this->getLocaleByOrder($order),
             'orderNumber'     => (STRING)$order->id,
             'redirectUrl'     => $domain . '/confirmation/' . $order->id,
-            'webhookUrl'      => 'http://office.plentymarkets.com' . '/rest/mollie/webhook', //TODO change after local testing
+            'webhookUrl'      => $domain . '/rest/mollie/webhook', //TODO change after local testing
             'method'          => $method,
             'lines'           => [],
         ];

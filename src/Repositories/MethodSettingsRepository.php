@@ -7,6 +7,7 @@ use Mollie\Models\MethodSetting;
 use Mollie\Validators\SaveMethodSettingValidator;
 use Plenty\Modules\Payment\Method\Contracts\PaymentMethodRepositoryContract;
 use Plenty\Modules\Plugin\DataBase\Contracts\DataBase;
+use Plenty\Modules\Plugin\DataBase\Contracts\Model;
 
 /**
  * Class MethodRepository
@@ -74,7 +75,23 @@ class MethodSettingsRepository implements MethodSettingsRepositoryContract
         $methodSettings->position = $methodSettingsData['position'];
 
         $this->persistPlentymarketsPaymentMethod($methodSettingsData['id'], $methodSettingsData['description']);
-        return $this->dataBase->save($methodSettings);
+        $methodSettings = $this->dataBase->save($methodSettings);
+        if ($methodSettings instanceof MethodSetting) {
+            $this->castSettings($methodSettings);
+        }
+        return $methodSettings;
+
+    }
+
+    /**
+     * @param MethodSetting|Model $methodSetting
+     * @return MethodSetting
+     */
+    private function castSettings(MethodSetting $methodSetting)
+    {
+        $methodSetting->isActive = ($methodSetting->isActive === true || $methodSetting->isActive == 1);
+        $methodSetting->position = (int)$methodSetting->position;
+        return $methodSetting;
     }
 
     /**
@@ -86,7 +103,7 @@ class MethodSettingsRepository implements MethodSettingsRepositoryContract
         $methodSettingsMap = [];
 
         foreach ($methodSettingsList as $methodSettings) {
-            $methodSettingsMap[$methodSettings->id] = $methodSettings;
+            $methodSettingsMap[$methodSettings->id] = $this->castSettings($methodSettings);
         }
 
         return $methodSettingsMap;
@@ -103,7 +120,7 @@ class MethodSettingsRepository implements MethodSettingsRepositoryContract
 
         if (!is_null($paymentMethods)) {
             foreach ($paymentMethods as $paymentMethod) {
-                if ($paymentMethod->paymentKey == 'MOLLIE_' . $mollieId) {
+                if ($paymentMethod->paymentKey == $mollieId) {
                     return;
                 }
             }

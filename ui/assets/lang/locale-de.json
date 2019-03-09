@@ -1,0 +1,14 @@
+{
+  "payments": "Zahlungsarten",
+  "search": "Suchen",
+  "backend_name": "Backend Name",
+  "active": "Aktiv",
+  "no_payment_loaded": "Keine Zahlungsarten geladen",
+  "actions": "Aktionen",
+  "save": "Speichern",
+  "back": "Zurück",
+  "settings": "Einstellungen",
+  "name_de": "Name (DE)",
+  "name_en": "Name (EN)",
+  "saved": "Gespeichert"
+}

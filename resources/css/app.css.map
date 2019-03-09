@@ -1,1 +1,1 @@
-{"version":3,"sources":["app.css"],"names":[],"mappings":"AAKA,gDACI,gBAAmB,CACtB","file":"app.css","sourcesContent":["\nbutton[data-v-49cba0d4] {\n    margin-top: 0.5rem;\n}\n\nbutton[data-v-37014890] {\n    margin-top: 0.5rem;\n}\n"]}
+{"version":3,"sources":["app.css"],"names":[],"mappings":"AAKA,gDACI,gBAAmB,CACtB","file":"app.css","sourcesContent":["\nbutton[data-v-9889f5ba] {\n    margin-top: 0.5rem;\n}\n\nbutton[data-v-a30419e2] {\n    margin-top: 0.5rem;\n}\n"]}

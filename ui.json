@@ -1,0 +1,11 @@
+{
+  "defaultEntryPoint": "index.html",
+  "menuEntries": [
+    {
+      "label": "Mollie",
+      "menu": "system/orders/payment",
+      "urlKey": "mollie",
+      "entryPoint": "index.html"
+    }
+  ]
+}

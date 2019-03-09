@@ -11,6 +11,8 @@ use Plenty\Plugin\ConfigRepository;
  */
 class ApiClient
 {
+    const PLUGIN_VERSION = '1.0.0';
+
     private $settings = [];
 
     /**
@@ -40,8 +42,9 @@ class ApiClient
     {
         return $this->libraryCallContract->call(
             'Mollie::CreateOrder', [
-                'apiKey'    => $this->getApiKey(),
-                'orderData' => $orderData
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey(),
+                'orderData'     => $orderData
             ]
         );
     }
@@ -55,9 +58,10 @@ class ApiClient
     {
         return $this->libraryCallContract->call(
             'Mollie::CreateShipment', [
-                'apiKey'       => $this->getApiKey(),
-                'orderId'      => (STRING)$orderId,
-                'shipmentData' => $shipmentData
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey(),
+                'orderId'       => (STRING)$orderId,
+                'shipmentData'  => $shipmentData
             ]
         );
     }
@@ -70,8 +74,9 @@ class ApiClient
     {
         return $this->libraryCallContract->call(
             'Mollie::GetOrder', [
-                'apiKey'  => $this->getApiKey(),
-                'orderId' => $orderId
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey(),
+                'orderId'       => $orderId
             ]
         );
     }
@@ -85,8 +90,9 @@ class ApiClient
     {
         return $this->libraryCallContract->call(
             'Mollie::CancelOrder', [
-                'apiKey'  => $this->getApiKey(),
-                'orderId' => $orderId
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey(),
+                'orderId'       => $orderId
             ]
         );
     }
@@ -100,9 +106,10 @@ class ApiClient
     {
         return $this->libraryCallContract->call(
             'Mollie::CreateRefund', [
-                'apiKey'       => $this->getApiKey(),
-                'orderId'      => (STRING)$orderId,
-                'refundData' => $refundData
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey(),
+                'orderId'       => (STRING)$orderId,
+                'refundData'    => $refundData
             ]
         );
     }
@@ -114,8 +121,9 @@ class ApiClient
     {
         return $this->libraryCallContract->call(
             'Mollie::Methods', [
-                'apiKey'   => $this->getApiKey(),
-                'resource' => 'orders'
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey(),
+                'resource'      => 'orders'
             ]
         );
     }
@@ -130,8 +138,9 @@ class ApiClient
             'Mollie::Methods',
             array_merge(
                 [
-                    'apiKey'   => $this->getApiKey(),
-                    'resource' => 'orders'
+                    'pluginVersion' => self::PLUGIN_VERSION,
+                    'apiKey'        => $this->getApiKey(),
+                    'resource'      => 'orders'
                 ],
                 $params
             )
