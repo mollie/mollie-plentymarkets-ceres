@@ -4,6 +4,7 @@ namespace Mollie\Services;
 
 use Mollie\Api\ApiClient;
 use Mollie\Contracts\MethodSettingsRepositoryContract;
+use Mollie\Helpers\LocaleHelper;
 use Mollie\Models\Method;
 use Mollie\Models\MethodsCacheAdapter;
 use Plenty\Modules\Account\Address\Contracts\AddressRepositoryContract;
@@ -194,7 +195,10 @@ class MethodService
 
         //locale
         if (!empty($agentService->getLanguages())) {
-            $filters['locale'] = $agentService->getLanguages()[0];
+            $filters['locale'] = LocaleHelper::buildLocale(
+                $agentService->getLanguages()[0],
+                $billingAddress instanceof Address ? $billingAddress : null
+            );
         }
 
         //amount

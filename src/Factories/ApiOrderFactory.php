@@ -2,6 +2,7 @@
 
 namespace Mollie\Factories;
 
+use Mollie\Helpers\LocaleHelper;
 use Mollie\Helpers\TrackingURLHelper;
 use Plenty\Modules\Account\Address\Models\Address;
 use Plenty\Modules\Account\Contact\Models\Contact;
@@ -194,42 +195,6 @@ class ApiOrderFactory
      */
     private function getLocaleByOrder(Order $order)
     {
-        $matrix = [
-            'en' => [
-                'en_US'
-            ],
-
-            'nl' => [
-                'nl_NL',
-                'nl_BE'
-            ],
-
-            'fr' => [
-                'fr_FR',
-                'fr_BE'
-            ],
-
-            'de' => [
-                'de_DE',
-                'de_AT',
-                'de_CH'
-            ],
-
-            'es' => ['es_ES'],
-            'ca' => ['ca_ES'],
-            'pt' => ['pt_PT'],
-            'it' => ['it_IT'],
-            'nb' => ['nb_NO'],
-            'sv' => ['sv_SE'],
-            'fi' => ['fi_FI'],
-            'da' => ['da_DK'],
-            'is' => ['is_IS'],
-            'hu' => ['hu_HU'],
-            'pl' => ['pl_PL'],
-            'lv' => ['lv_LV'],
-            'lt' => ['lt_LT'],
-        ];
-
         $lang = '';
 
         //1. Get lang by contact
@@ -243,18 +208,7 @@ class ApiOrderFactory
             $lang = $order->billingAddress->country->lang;
         }
 
-        //3. Fallback to en
-        if (empty($lang) || !array_key_exists($lang, $matrix)) {
-            $lang = 'en';
-        }
-
-        $locale = strtolower($lang) . '_' . strtoupper($order->billingAddress->country->isoCode2);
-
-        if (!in_array($locale, $matrix[$lang])) {
-            $locale = $matrix[$lang][0];
-        }
-
-        return $locale;
+        return LocaleHelper::buildLocale($lang, $order->billingAddress);
     }
 
     /**
