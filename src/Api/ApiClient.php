@@ -4,6 +4,7 @@ namespace Mollie\Api;
 
 use Plenty\Modules\Plugin\Libs\Contracts\LibraryCallContract;
 use Plenty\Plugin\ConfigRepository;
+use Plenty\Plugin\Log\Loggable;
 
 /**
  * Class ApiClient
@@ -11,6 +12,8 @@ use Plenty\Plugin\ConfigRepository;
  */
 class ApiClient
 {
+    use Loggable;
+
     const PLUGIN_VERSION = '1.0.0';
 
     private $settings = [];
@@ -134,6 +137,8 @@ class ApiClient
      */
     public function getMethods(array $params)
     {
+        $this->getLogger('getMethods')->error('Mollie::Debug.requestPayment', $params);
+
         return $this->libraryCallContract->call(
             'Mollie::Methods',
             array_merge(
