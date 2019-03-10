@@ -15,7 +15,7 @@ class LocaleHelper
      * @param Address $address
      * @return string
      */
-    public static function buildLocale($lang, Address $address)
+    public static function buildLocale($lang, Address $address = null)
     {
         if (strpos($lang, '_') !== false) {
             return $lang;
