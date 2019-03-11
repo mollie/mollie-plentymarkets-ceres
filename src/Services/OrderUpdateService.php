@@ -11,6 +11,7 @@ use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Payment\Contracts\PaymentOrderRelationRepositoryContract;
 use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Plenty\Modules\Payment\Models\Payment;
+use Plenty\Modules\Payment\Models\PaymentProperty;
 use Plenty\Plugin\Log\Loggable;
 
 /**
@@ -87,9 +88,9 @@ class OrderUpdateService
 
             if (($mollieOrder['status'] == 'paid' || $mollieOrder['status'] == 'authorized') && $plentyOrder->paymentStatus == 'unpaid') {
                 $this->setPaid($plentyOrder, $mollieOrder);
-            } elseif($mollieOrder['status'] == 'paid' && $plentyOrder->paymentStatus == 'paid' && $mollieOrder['amountRefunded']['value'] > 0){
+            } elseif ($mollieOrder['status'] == 'paid' && $plentyOrder->paymentStatus == 'paid' && $mollieOrder['amountRefunded']['value'] > 0) {
                 //TODO create negative payment
-            }else {
+            } else {
                 $this->commentRepository->createComment(
                     [
                         'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
@@ -121,7 +122,7 @@ class OrderUpdateService
         $this->getLogger('payment')->debug('Mollie::Debug.webhook', $paymentObject);
 
         $payment = $this->paymentRepository->createPayment($paymentObject);
-        if($payment instanceof Payment){
+        if ($payment instanceof Payment) {
             $this->paymentOrderRelationRepository->createOrderRelation($payment, $plentyOrder);
         }
     }
@@ -167,7 +168,33 @@ class OrderUpdateService
         if ($payment->status == 1) {
             $payment->unaccountable = 0;
         }
+        
+        $payment->properties = [
+            $this->getPaymentProperty(PaymentProperty::TYPE_REFERENCE_ID, $mollieOrder['id'])
+        ];
+
+        $payment->regenerateHash = true;
 
         return $payment;
     }
+
+    /**
+     * Returns a PaymentProperty with the given params
+     *
+     * @param int $typeId
+     * @param string $value
+     *
+     * @return PaymentProperty
+     */
+    private function getPaymentProperty(int $typeId, $value)
+    {
+        /** @var PaymentProperty $paymentProperty */
+        $paymentProperty = pluginApp(PaymentProperty::class);
+
+        $paymentProperty->typeId = $typeId;
+        $paymentProperty->value  = $value;
+
+        return $paymentProperty;
+    }
+
 }
