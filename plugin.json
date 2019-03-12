@@ -3,7 +3,7 @@
   "namespace": "Mollie",
   "type": "payment",
   "version": "1.0.0",
-  "license": "",
+  "license": "free for commercial use",
   "author": "Frontend Studios GmbH",
   "authorIcon": "icon_author_xs.png",
   "pluginIcon": "icon_plugin_xs.png",
