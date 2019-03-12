@@ -1,6 +1,10 @@
 {
   "name": "Mollie",
   "namespace": "Mollie",
+  "marketplaceName": {
+    "en": "Mollie",
+    "de": "Mollie"
+  },
   "type": "payment",
   "version": "1.0.0",
   "license": "free for commercial use",
