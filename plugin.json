@@ -40,6 +40,10 @@
     "Mollie\\Migrations\\CreateMethodSettingsTable"
   ],
   "dataProviders": [
-    {"key":"Mollie\\DataProviders\\ReInitPaymentComponent", "name":"Payment button", "description": "Display the Mollie payment button"}
+    {
+      "key": "Mollie\\DataProviders\\ReInitPaymentComponent",
+      "name": "Payment button",
+      "description": "Display the Mollie payment button"
+    }
   ]
 }

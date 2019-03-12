@@ -1,5 +1,6 @@
 {
   "defaultEntryPoint": "index.html",
+  "namespace": "Mollie",
   "menuEntries": [
     {
       "label": "Mollie",
