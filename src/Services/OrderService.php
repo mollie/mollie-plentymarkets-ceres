@@ -100,7 +100,6 @@ class OrderService
                 }
             }
         }
-        throw new \Exception('matching payment failed');
     }
 
     /**
