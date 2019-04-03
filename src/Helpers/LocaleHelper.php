@@ -17,6 +17,8 @@ class LocaleHelper
      */
     public static function buildLocale($lang, Address $address = null)
     {
+        $lang = str_replace('-', '_', $lang);
+
         if (strpos($lang, '_') !== false) {
             return $lang;
         }

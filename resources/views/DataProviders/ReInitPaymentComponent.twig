@@ -1,9 +1,9 @@
 {% if services.template.isCurrentTemplate('tpl.my-account') %}
 
-    <mollie-re-init-payment-btn v-bind:label="{{ trans("Mollie::UI.initPayment") }}" v-bind:order="{{ order | json_encode }}" v-bind:payment-ids="{{ paymentIds | json_encode }}"></mollie-re-init-payment-btn>
+    <mollie-re-init-payment-btn label="{{ trans("Mollie::UI.initPayment") }}" v-bind:order="{{ order | json_encode }}" v-bind:payment-ids="{{ paymentIds | json_encode }}"></mollie-re-init-payment-btn>
 
 {% elseif services.template.isCurrentTemplate('tpl.confirmation') %}
 
-    <mollie-re-init-payment-container v-bind:label="{{ trans("Mollie::UI.initPayment") }}" v-bind:order="{{ order | json_encode }}" v-bind:payment-ids="{{ paymentIds | json_encode }}"></mollie-re-init-payment-container>
+    <mollie-re-init-payment-container label="{{ trans("Mollie::UI.initPayment") }}" v-bind:order="{{ order | json_encode }}" v-bind:payment-ids="{{ paymentIds | json_encode }}"></mollie-re-init-payment-container>
 
 {% endif %}

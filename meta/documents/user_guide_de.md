@@ -7,35 +7,20 @@ Mollie verlangt keinen Mindestumsatz, keine strikten Verträge, keine versteckte
 
 ## Unterstützte Zahlungsarten von Mollie ##
 - iDEAL
-
 - Creditcard
-
 - CartaSi & Cartes Bancaires
-
 - Bancontact
-
 - Belfius Pay Button
-
 - ING HomePay
-
 - KBC/CBC-Betaalknop
-
 - SOFORT Banking
-
 - EPS
-
 - Giropay
-
 - PayPal
-
 - Bitcoin
-
 - Paysafecard
-
 - Klarna
-
 - SEPA bank transfer
-
 - Giftcards 
 
 ## Einrichtung
