@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.0.3
+
+- FIX - Probleme in Verbindung mit Vorkasse.
+
 ## 1.0.2
 
 - FIX - Darstellung der Klarna Zahlungsart für Gäste.
