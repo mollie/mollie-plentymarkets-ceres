@@ -3,7 +3,9 @@
 namespace Mollie\Events;
 
 use Mollie\Services\OrderService;
+use Mollie\Traits\CanCheckMollieMethod;
 use Plenty\Modules\Payment\Events\Checkout\ExecutePayment;
+use Plenty\Modules\Payment\Method\Models\PaymentMethod;
 use Plenty\Plugin\Log\Loggable;
 
 /**
@@ -12,7 +14,7 @@ use Plenty\Plugin\Log\Loggable;
  */
 class BuildPaymentDetails
 {
-    use Loggable;
+    use Loggable, CanCheckMollieMethod;
 
     /**
      * @var OrderService
@@ -33,14 +35,17 @@ class BuildPaymentDetails
      */
     public function handle(ExecutePayment $event)
     {
-        try {
-            $result = $this->orderService->prepareOrder($event->getOrderId(), $event->getMop());
-            $event->setType('redirectUrl');
-            $event->setValue($result['_links']['checkout']['href']);
-        } catch (\Exception $exception) {
-            $event->setType('error');
-            $event->setValue('Internal Error');
-            $this->getLogger('creatingOrder')->logException($exception);
+        $paymentMethod = $this->getMolliePaymentMethod($event->getMop());
+        if ($paymentMethod instanceof PaymentMethod) {
+            try {
+                $result = $this->orderService->prepareOrder($event->getOrderId(), $event->getMop());
+                $event->setType('redirectUrl');
+                $event->setValue($result['_links']['checkout']['href']);
+            } catch (\Exception $exception) {
+                $event->setType('error');
+                $event->setValue('Internal Error');
+                $this->getLogger('creatingOrder')->logException($exception);
+            }
         }
     }
 }

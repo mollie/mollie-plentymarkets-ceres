@@ -77,6 +77,7 @@ class OrderService
                     } else {
                         //process payment
                         $orderData = $this->apiOrderFactory->buildOrderData($order, $paymentMethod->paymentKey);
+                        $this->getLogger('creatingOrder')->debug('Mollie::Debug.createOrder', $orderData);
                         $result    = $this->apiClient->createOrder($orderData);
                     }
 
@@ -98,6 +99,8 @@ class OrderService
                     $this->getLogger('creatingOrder')->logException($exception);
                     throw new \Exception($exception->getMessage());
                 }
+            } else {
+                $this->getLogger('creatingOrder')->error('PaymentMethodNotFound', ['orderId' => $orderId, 'mopId' => $mopId]);
             }
         }
     }

@@ -137,8 +137,6 @@ class ApiClient
      */
     public function getMethods(array $params)
     {
-        $this->getLogger('getMethods')->error('Mollie::Debug.requestPayment', $params);
-
         return $this->libraryCallContract->call(
             'Mollie::Methods',
             array_merge(
