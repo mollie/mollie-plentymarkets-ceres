@@ -14,7 +14,7 @@ class ApiClient
 {
     use Loggable;
 
-    const PLUGIN_VERSION = '1.0.1';
+    const PLUGIN_VERSION = '1.0.3';
 
     private $settings = [];
 
