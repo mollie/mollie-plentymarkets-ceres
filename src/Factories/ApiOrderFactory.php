@@ -3,6 +3,7 @@
 namespace Mollie\Factories;
 
 use Mollie\Helpers\LocaleHelper;
+use Mollie\Helpers\PhoneHelper;
 use Mollie\Helpers\TrackingURLHelper;
 use Plenty\Modules\Account\Address\Models\Address;
 use Plenty\Modules\Account\Contact\Models\Contact;
@@ -29,6 +30,9 @@ class ApiOrderFactory
      */
     public function buildOrderData(Order $order, $method)
     {
+        /** @var PhoneHelper $phoneHelper */
+        $phoneHelper = pluginApp(PhoneHelper::class);
+
         /** @var OrderAmount $orderAmount */
         $orderAmount = $order->amount;
 
@@ -56,7 +60,7 @@ class ApiOrderFactory
                 'givenName'        => $billingAddress->firstName,
                 'familyName'       => $billingAddress->lastName,
                 'email'            => $billingAddress->email,
-                'phone'            => $billingAddress->phone,
+                'phone'            => $phoneHelper->correctPhone($billingAddress->phone, $billingAddress->country->isoCode2),
             ],
             'shippingAddress' => [
                 'organizationName' => $deliveryAddress->companyName,
