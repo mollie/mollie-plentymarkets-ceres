@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.0.4
+
+- FIX - Phone number formatting.
+
 ## 1.0.3
 
 - FIX - Issues in combination with pre payment.

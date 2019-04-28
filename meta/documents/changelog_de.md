@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.0.4
+
+- FIX - Telefonnummer Formatierung.
+
 ## 1.0.3
 
 - FIX - Probleme in Verbindung mit Vorkasse.
