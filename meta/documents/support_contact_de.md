@@ -1,15 +1,19 @@
-# Support
+# Technischer Support
 
-## Frontend Studios GmbH
+**Frontend Studios GmbH**
+ 
+<a href="https://www.frontend-studios.de" target="_blank">www.frontend-studios.de</a>
 
-### Homepage
- 
-<a href="www.frontend-studios.de" target="_blank">www.frontend-studios.de</a>
- 
-### E-Mail
- 
-E-Mail: <a href="mailto:dev@frontend-studios.de">dev@frontend-studios.de</a>
- 
-### Telefon
- 
-Telefon: +49 561 9885097-0
+# Kontakt zu Mollie
+
+Lise-Meitner-Straße 9
+24223 Schwentinental
+Deutschland
+
+<a href="https://www.mollie.com/de/contact" target="_blank">https://www.mollie.com/de/contact</a>
+
+**Die Deutsche Hotline:**
++49 (0) 302 240 902 
+
+**Oder per Mail:**
+info@mollie.com 
