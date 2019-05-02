@@ -1,5 +1,10 @@
 # Release Notes for Mollie
 
+## 1.0.5
+
+- FIX - Issues with business customers.
+- FIX - Update of the payment button at the order confirmation page.
+
 ## 1.0.4
 
 - FIX - Phone number formatting.

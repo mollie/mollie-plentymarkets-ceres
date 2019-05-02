@@ -1,5 +1,10 @@
 # Release Notes für Mollie
 
+## 1.0.5
+
+- FIX - Probleme bei Firmenkunden.
+- FIX - Aktualisierung des Kauf-Buttons auf der Bestellbestätigungs-Seite.
+
 ## 1.0.4
 
 - FIX - Telefonnummer Formatierung.
