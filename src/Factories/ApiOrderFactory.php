@@ -6,6 +6,7 @@ use Mollie\Helpers\LocaleHelper;
 use Mollie\Helpers\PhoneHelper;
 use Mollie\Helpers\TrackingURLHelper;
 use Plenty\Modules\Account\Address\Models\Address;
+use Plenty\Modules\Account\Address\Models\AddressOption;
 use Plenty\Modules\Account\Contact\Models\Contact;
 use Plenty\Modules\Helper\Services\WebstoreHelper;
 use Plenty\Modules\Order\Models\Order;
@@ -57,8 +58,8 @@ class ApiOrderFactory
                 'postalCode'       => (STRING)$billingAddress->postalCode,
                 'country'          => $billingAddress->country->isoCode2,
                 'title'            => $billingAddress->title,
-                'givenName'        => $billingAddress->firstName,
-                'familyName'       => $billingAddress->lastName,
+                'givenName'        => $this->getName($billingAddress),
+                'familyName'       => $this->getName($billingAddress, false),
                 'email'            => $billingAddress->email,
                 'phone'            => $phoneHelper->correctPhone($billingAddress->phone, $billingAddress->country->isoCode2),
             ],
@@ -71,8 +72,8 @@ class ApiOrderFactory
                 'postalCode'       => (STRING)$deliveryAddress->postalCode,
                 'country'          => $deliveryAddress->country->isoCode2,
                 'title'            => $deliveryAddress->title,
-                'givenName'        => $deliveryAddress->firstName,
-                'familyName'       => $deliveryAddress->lastName,
+                'givenName'        => $this->getName($deliveryAddress),
+                'familyName'       => $this->getName($deliveryAddress, false),
                 'email'            => $deliveryAddress->email,
             ],
             'metadata'        => [
@@ -81,7 +82,7 @@ class ApiOrderFactory
             'locale'          => $this->getLocaleByOrder($order),
             'orderNumber'     => (STRING)$order->id,
             'redirectUrl'     => $domain . '/confirmation/' . $order->id,
-            'webhookUrl'      => $domain . '/rest/mollie/webhook', //TODO change after local testing
+            'webhookUrl'      => $domain . '/rest/mollie/webhook',
             'method'          => $method,
             'lines'           => [],
         ];
@@ -140,6 +141,34 @@ class ApiOrderFactory
         }
 
         return $orderData;
+    }
+
+    /**
+     * @param Address $address
+     * @param bool $isFirstName
+     * @return string
+     */
+    private function getName(Address $address, $isFirstName = true)
+    {
+        $firstName = $address->firstName;
+        $lastName  = $address->lastName;
+
+        if (empty($firstName)) {
+            foreach ($address->options as $addressOption) {
+                if ($addressOption instanceof AddressOption) {
+                    if ($addressOption->typeId == AddressOption::TYPE_CONTACT_PERSON && !empty($addressOption->value)) {
+                        $parts     = explode(' ', $addressOption->value);
+                        $firstName = array_shift($parts);
+                        $lastName  = implode(' ', $parts);
+                    }
+                }
+            }
+        }
+
+        if ($isFirstName) {
+            return $firstName;
+        }
+        return $lastName;
     }
 
     /**
