@@ -5,6 +5,7 @@ namespace Mollie\Providers;
 use Mollie\Api\ApiClient;
 use Mollie\Contracts\MethodSettingsRepositoryContract;
 use Mollie\Events\BuildPaymentDetails;
+use Mollie\Events\PrePaymentValidation;
 use Mollie\PaymentMethods\PaymentBancontact;
 use Mollie\PaymentMethods\PaymentBanktransfer;
 use Mollie\PaymentMethods\PaymentBelfius;
@@ -36,6 +37,7 @@ use Plenty\Modules\Frontend\Events\FrontendCustomerAddressChanged;
 use Plenty\Modules\Frontend\Events\FrontendLanguageChanged;
 use Plenty\Modules\Frontend\Events\FrontendShippingCountryChanged;
 use Plenty\Modules\Payment\Events\Checkout\ExecutePayment;
+use Plenty\Modules\Payment\Events\Checkout\GetPaymentMethodContent;
 use Plenty\Modules\Payment\Method\Contracts\PaymentMethodContainer;
 use Plenty\Plugin\Events\Dispatcher;
 use Plenty\Plugin\ServiceProvider as PlentyServiceProvider;
@@ -102,6 +104,7 @@ class ServiceProvider extends PlentyServiceProvider
 
         // Listen for the event that gets the payment method content
         $dispatcher->listen(ExecutePayment::class, BuildPaymentDetails::class);
+        $dispatcher->listen(GetPaymentMethodContent::class, PrePaymentValidation::class);
 
         //listen to Ceres/IO events to register resources
         $dispatcher->listen(

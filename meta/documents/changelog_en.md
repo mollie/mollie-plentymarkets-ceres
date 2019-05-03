@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.0.6
+
+- UPDATE - Phone number validation at credit card payments.
+
 ## 1.0.5
 
 - FIX - Issues with business customers.

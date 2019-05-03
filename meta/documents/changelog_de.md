@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.0.6
+
+- UPDATE - Telefonnummer Prüfung bei Kreditkarte.
+
 ## 1.0.5
 
 - FIX - Probleme bei Firmenkunden.
