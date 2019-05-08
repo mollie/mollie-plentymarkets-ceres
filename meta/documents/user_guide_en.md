@@ -86,3 +86,128 @@ The payment method will now be installed in your plentymarkets system. It will b
         </tr>
 	</tbody>
 </table>
+
+### Event procedures
+
+1. Go to **System » Orders » Event procedures**.
+2. Click on **Add event procedure**. </br> → The **Create new event procedure** window opens.
+3. Enter the name.
+4. Select the event listed in tables 2-4.
+5. **Save** the settings.
+6. Pay attention to the explanations given in tables 2-4 and carry out the settings as desired.
+7. Place a check mark next to the option **Active**.
+8. **Save** the settings.
+
+#### Register shipment at mollie
+
+<table>
+	<thead>
+	    <tr>
+            <th>
+                Setting
+            </th>
+            <th>
+                Option
+            </th>
+            <th>
+                Selection
+            </th>
+        </tr>
+	</thead>
+	<tbody>
+        <tr>
+            <td><strong>Event</strong></td>
+            <td><strong>Select the event to trigger a shipment.</strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><strong>Filter 1</strong></td>
+            <td><strong>Order &gt; Payment method</strong></td>
+            <td><strong>Plugin: mollie: *</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Procedure</strong></td>
+            <td><strong>Plugin &gt; Register shipment at mollie</strong></td>
+            <td>&nbsp;</td>
+      </tr>
+    </tbody>
+	<caption>
+		Table 2: Event procedure "Register shipment at mollie"
+	</caption>
+</table>
+
+#### Register cancellation at mollie
+
+<table>
+	<thead>
+	    <tr>
+            <th>
+                Setting
+            </th>
+            <th>
+                Option
+            </th>
+            <th>
+                Selection
+            </th>
+        </tr>
+	</thead>
+	<tbody>
+        <tr>
+            <td><strong>Event</strong></td>
+            <td><strong>Select the event to trigger a shipment.</strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><strong>Filter 1</strong></td>
+            <td><strong>Order &gt; Payment method</strong></td>
+            <td><strong>Plugin: mollie: *</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Procedure</strong></td>
+            <td><strong>Plugin &gt; Register cancellation at mollie</strong></td>
+            <td>&nbsp;</td>
+      </tr>
+    </tbody>
+	<caption>
+		Table 3: Event procedure "Register cancellation at mollie"
+	</caption>
+</table>
+
+#### Register refund at mollie
+
+<table>
+	<thead>
+	    <tr>
+            <th>
+                Setting
+            </th>
+            <th>
+                Option
+            </th>
+            <th>
+                Selection
+            </th>
+        </tr>
+	</thead>
+	<tbody>
+        <tr>
+            <td><strong>Event</strong></td>
+            <td><strong>Select the event to trigger a shipment.</strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><strong>Filter 1</strong></td>
+            <td><strong>Order &gt; Payment method</strong></td>
+            <td><strong>Plugin: mollie: *</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Procedure</strong></td>
+            <td><strong>Plugin &gt; Register refund at mollie</strong></td>
+            <td>&nbsp;</td>
+      </tr>
+    </tbody>
+	<caption>
+		Table 3: Event procedure "Register refund at mollie"
+	</caption>
+</table>

@@ -71,3 +71,130 @@ Die Zahlungsart wird nun in Ihrem plentymarkets System installiert. Sie ist nun 
         </tr>
 	</tbody>
 </table>
+
+### Ereignisaktionen
+
+1. Öffnen Sie das Menü **System » Aufträge » Ereignisaktionen**.
+2. Klicken Sie auf **Ereignisaktion hinzufügen**.<br />
+→ Das Fenster **Neue Ereignisaktion erstellen** wird geöffnet.
+3. Geben Sie einen Namen ein.
+4. Wählen Sie das Ereignis gemäß Tabellen 2-4.
+5. **Speichern** Sie die Einstellungen.
+6. Nehmen Sie die Einstellungen gemäß Tabellen 2-4 vor.
+7. Setzen Sie ein Häkchen bei **Aktiv**.
+8. **Speichern** Sie die Einstellungen.
+
+#### Versand bei mollie anmelden
+
+<table>
+   <thead>
+    </tr>
+      <th>
+         Einstellung
+      </th>
+      <th>
+         Option
+      </th>
+      <th>
+         Auswahl
+      </th>
+    </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td><strong>Ereignis</strong></td>
+         <td><strong>Das Ereignis wählen, nach dem der Versand angemeldet werden soll.</strong></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td><strong>Filter 1</strong></td>
+         <td><strong>Auftrag > Zahlungsart</strong></td>
+         <td><strong>Plugin: mollie: *</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Aktion</strong></td>
+        <td><strong>Plugin > Versand bei mollie anmelden</strong></td>
+        <td></td>
+      </tr>
+    </tbody>
+   <caption>
+      Tab. 2: Ereignisaktion "Versand bei mollie anmelden"
+   </caption>
+</table>
+
+#### Storno bei mollie anmelden
+
+<table>
+   <thead>
+    </tr>
+      <th>
+         Einstellung
+      </th>
+      <th>
+         Option
+      </th>
+      <th>
+         Auswahl
+      </th>
+    </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td><strong>Ereignis</strong></td>
+         <td><strong>Das Ereignis wählen, nach dem ein Storno angemeldet werden soll.</strong></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td><strong>Filter 1</strong></td>
+         <td><strong>Auftrag > Zahlungsart</strong></td>
+         <td><strong>Plugin: mollie: *</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Aktion</strong></td>
+        <td><strong>Plugin > Storno bei mollie anmelden</strong></td>
+        <td></td>
+      </tr>
+    </tbody>
+   <caption>
+      Tab. 3: Ereignisaktion "Storno bei mollie anmelden"
+   </caption>
+</table>
+
+#### Gutschrift bei mollie anmelden
+
+<table>
+   <thead>
+    </tr>
+      <th>
+         Einstellung
+      </th>
+      <th>
+         Option
+      </th>
+      <th>
+         Auswahl
+      </th>
+    </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td><strong>Ereignis</strong></td>
+         <td><strong>Das Ereignis wählen, nach dem eine Gutschrift angemeldet werden soll.</strong></td>
+         <td></td>
+      </tr>
+      <tr>
+         <td><strong>Filter 1</strong></td>
+         <td><strong>Auftrag > Zahlungsart</strong></td>
+         <td><strong>Plugin: mollie: *</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Aktion</strong></td>
+        <td><strong>Plugin > Gutschrift bei mollie anmelden</strong></td>
+        <td></td>
+      </tr>
+    </tbody>
+   <caption>
+      Tab. 4: Ereignisaktion "Gutschrift bei mollie anmelden"
+   </caption>
+</table>
+
