@@ -47,7 +47,9 @@ class TransactionRepository implements TransactionRepositoryContract
         $transaction->timestamp = time();
 
         $transaction = $this->dataBase->save($transaction);
-        $this->frontendSessionStorageFactory->getPlugin()->setValue(self::SESSION_KEY, $transaction->transactionId);
+        if ($transaction instanceof Transaction) {
+            $this->frontendSessionStorageFactory->getPlugin()->setValue(self::SESSION_KEY, $transaction->transactionId);
+        }
 
         return $transaction;
     }

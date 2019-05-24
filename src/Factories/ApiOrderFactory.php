@@ -28,7 +28,7 @@ class ApiOrderFactory
             /** @var OrderRepositoryContract $orderRepo */
             $orderRepo = pluginApp(OrderRepositoryContract::class);
 
-            $options['order'] = $orderRepo->findOrderById($options['orderId']);
+            $options['order'] = $orderRepo->findOrderById((INT)$options['orderId']);
         }
 
         if (array_key_exists('order', $options) && $options['order'] instanceof Order) {
