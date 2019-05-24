@@ -33,8 +33,9 @@ class RouteServiceProvider extends PlentyRouteServiceProvider
             function ($apiRouter) {
 
                 //Frontend routes
-                $apiRouter->get('mollie/init_payment', 'PaymentController@init');
+                $apiRouter->get('mollie/init_payment', 'PaymentController@reInit');
                 $apiRouter->post('mollie/webhook', 'PaymentController@webHook');
+                $apiRouter->get('mollie/check', 'PaymentController@checkPayment');
             }
         );
     }

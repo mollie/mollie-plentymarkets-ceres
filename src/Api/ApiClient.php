@@ -14,7 +14,7 @@ class ApiClient
 {
     use Loggable;
 
-    const PLUGIN_VERSION = '1.0.6';
+    const PLUGIN_VERSION = '1.1.0';
 
     private $settings = [];
 
@@ -96,6 +96,23 @@ class ApiClient
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'orderId'       => $orderId
+            ]
+        );
+    }
+
+    /**
+     * @param string $orderId
+     * @param string $newOrderNumber
+     * @return array
+     */
+    public function updateOrderNumber($orderId, $newOrderNumber)
+    {
+        return $this->libraryCallContract->call(
+            'Mollie::UpdateOrder', [
+                'pluginVersion'  => self::PLUGIN_VERSION,
+                'apiKey'         => $this->getApiKey(),
+                'orderId'        => $orderId,
+                'newOrderNumber' => $newOrderNumber
             ]
         );
     }

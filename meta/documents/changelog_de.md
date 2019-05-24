@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.1.0
+
+- UPDATE - Checkoutprozess wurde umgebaut.
+
 ## 1.0.6
 
 - UPDATE - Telefonnummer Prüfung bei Kreditkarte.

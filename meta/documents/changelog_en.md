@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.1.0
+
+- UPDATE - Checkout process was changed.
+
 ## 1.0.6
 
 - UPDATE - Phone number validation at credit card payments.

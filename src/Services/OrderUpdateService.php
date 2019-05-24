@@ -3,6 +3,8 @@
 namespace Mollie\Services;
 
 use Mollie\Api\ApiClient;
+use Mollie\Contracts\TransactionRepositoryContract;
+use Mollie\Traits\CanHandleTransactionId;
 use Plenty\Modules\Comment\Contracts\CommentRepositoryContract;
 use Plenty\Modules\Comment\Models\Comment;
 use Plenty\Modules\Frontend\Contracts\CurrencyExchangeRepositoryContract;
@@ -20,7 +22,7 @@ use Plenty\Plugin\Log\Loggable;
  */
 class OrderUpdateService
 {
-    use Loggable;
+    use Loggable, CanHandleTransactionId;
 
     /**
      * @var CommentRepositoryContract
@@ -76,29 +78,41 @@ class OrderUpdateService
     public function updatePlentyOrder($mollieOrderId)
     {
         $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.webhook', $mollieOrderId);
-        $plentyOrder = $this->orderRepository->findOrderByExternalOrderId($mollieOrderId);
-        if ($plentyOrder instanceof Order) {
-            $mollieOrder = $this->apiClient->getOrder($mollieOrderId);
+        $mollieOrder = $this->apiClient->getOrder($mollieOrderId);
 
-            $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.mollieOrder', $mollieOrder);
+        if (array_key_exists('transactionId', $mollieOrder['metadata']) && $this->isWrapped($mollieOrder['metadata']['transactionId'])) {
+            //prepared for checkout
 
-            if ($mollieOrder['metadata']['orderId'] != $plentyOrder->id) {
-                throw new \Exception('Orders don\'t match');
+            if (($mollieOrder['status'] == 'paid' || $mollieOrder['status'] == 'authorized')) {
+                /** @var TransactionRepositoryContract $transactionRepository */
+                $transactionRepository = pluginApp(TransactionRepositoryContract::class);
+                $transactionRepository->setTransactionPaid($this->unwrapTransactionId($mollieOrder['metadata']['transactionId']));
             }
+        } else {
+            //already existing order
+            $plentyOrder = $this->orderRepository->findOrderByExternalOrderId($mollieOrderId);
+            if ($plentyOrder instanceof Order) {
 
-            if (($mollieOrder['status'] == 'paid' || $mollieOrder['status'] == 'authorized') && $plentyOrder->paymentStatus == 'unpaid') {
-                $this->setPaid($plentyOrder, $mollieOrder);
-            } elseif ($mollieOrder['status'] == 'paid' && $plentyOrder->paymentStatus == 'paid' && $mollieOrder['amountRefunded']['value'] > 0) {
-                //TODO create negative payment
-            } else {
-                $this->commentRepository->createComment(
-                    [
-                        'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
-                        'referenceValue'      => $plentyOrder->id,
-                        'text'                => 'Payment status update by mollie: ' . $mollieOrder['status'],
-                        'isVisibleForContact' => true
-                    ]
-                );
+                $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.mollieOrder', $mollieOrder);
+
+                if ($mollieOrder['metadata']['orderId'] != $plentyOrder->id) {
+                    throw new \Exception('Orders don\'t match');
+                }
+
+                if (($mollieOrder['status'] == 'paid' || $mollieOrder['status'] == 'authorized') && $plentyOrder->paymentStatus == 'unpaid') {
+                    $this->setPaid($plentyOrder, $mollieOrder);
+                } elseif ($mollieOrder['status'] == 'paid' && $plentyOrder->paymentStatus == 'paid' && $mollieOrder['amountRefunded']['value'] > 0) {
+                    //TODO create negative payment
+                } else {
+                    $this->commentRepository->createComment(
+                        [
+                            'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
+                            'referenceValue'      => $plentyOrder->id,
+                            'text'                => 'Payment status update by mollie: ' . $mollieOrder['status'],
+                            'isVisibleForContact' => true
+                        ]
+                    );
+                }
             }
         }
     }
@@ -168,7 +182,7 @@ class OrderUpdateService
         if ($payment->status == 1) {
             $payment->unaccountable = 0;
         }
-        
+
         $payment->properties = [
             $this->getPaymentProperty(PaymentProperty::TYPE_REFERENCE_ID, $mollieOrder['id'])
         ];

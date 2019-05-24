@@ -4,8 +4,12 @@ namespace Mollie\Providers;
 
 use Mollie\Api\ApiClient;
 use Mollie\Contracts\MethodSettingsRepositoryContract;
-use Mollie\Events\BuildPaymentDetails;
-use Mollie\Events\PrePaymentValidation;
+use Mollie\Contracts\TransactionRepositoryContract;
+use Mollie\Events\ExecuteMolliePayment;
+use Mollie\Events\PreparePayment;
+use Mollie\Factories\ApiOrderFactory;
+use Mollie\Factories\Providers\CheckoutProvider;
+use Mollie\Factories\Providers\OrderProvider;
 use Mollie\PaymentMethods\PaymentBancontact;
 use Mollie\PaymentMethods\PaymentBanktransfer;
 use Mollie\PaymentMethods\PaymentBelfius;
@@ -27,6 +31,7 @@ use Mollie\Procedures\OrderCanceled;
 use Mollie\Procedures\OrderShipped;
 use Mollie\Procedures\RefundCreated;
 use Mollie\Repositories\MethodSettingsRepository;
+use Mollie\Repositories\TransactionRepository;
 use Mollie\Services\MethodService;
 use Plenty\Modules\Basket\Events\Basket\AfterBasketChanged;
 use Plenty\Modules\Basket\Events\Basket\AfterBasketCreate;
@@ -103,8 +108,8 @@ class ServiceProvider extends PlentyServiceProvider
         }
 
         // Listen for the event that gets the payment method content
-        $dispatcher->listen(ExecutePayment::class, BuildPaymentDetails::class);
-        $dispatcher->listen(GetPaymentMethodContent::class, PrePaymentValidation::class);
+        $dispatcher->listen(GetPaymentMethodContent::class, PreparePayment::class);
+        $dispatcher->listen(ExecutePayment::class, ExecuteMolliePayment::class);
 
         //listen to Ceres/IO events to register resources
         $dispatcher->listen(
@@ -145,8 +150,13 @@ class ServiceProvider extends PlentyServiceProvider
      */
     private function registerMethodServices()
     {
+        $this->getApplication()->singleton(ApiOrderFactory::class);
+        $this->getApplication()->singleton(CheckoutProvider::class);
+        $this->getApplication()->singleton(OrderProvider::class);
+
         $this->getApplication()->singleton(MethodSettingsRepositoryContract::class, MethodSettingsRepository::class);
         $this->getApplication()->singleton(MethodService::class);
+        $this->getApplication()->singleton(TransactionRepositoryContract::class, TransactionRepository::class);
     }
 
     /**

@@ -3,8 +3,11 @@
 namespace Mollie\Services;
 
 use Mollie\Api\ApiClient;
+use Mollie\Contracts\TransactionRepositoryContract;
 use Mollie\Factories\ApiOrderFactory;
+use Mollie\Models\Transaction;
 use Mollie\Traits\CanCheckMollieMethod;
+use Mollie\Traits\CanHandleTransactionId;
 use Plenty\Exceptions\ValidationException;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Order\Models\Order;
@@ -19,7 +22,7 @@ use Plenty\Plugin\Log\Loggable;
  */
 class OrderService
 {
-    use Loggable, CanCheckMollieMethod;
+    use Loggable, CanCheckMollieMethod, CanHandleTransactionId;
 
     /**
      * @var OrderRepositoryContract
@@ -50,6 +53,47 @@ class OrderService
     }
 
     /**
+     * @param null|int $mopId
+     * @return array
+     * @throws \Exception
+     */
+    public function preparePayment($mopId = null)
+    {
+        /** @var TransactionRepositoryContract $transactionRepository */
+        $transactionRepository = pluginApp(TransactionRepositoryContract::class);
+
+        $transaction = $transactionRepository->createTransaction();
+
+        if ($transaction instanceof Transaction) {
+
+            $paymentMethod = $this->getMolliePaymentMethod($mopId);
+            if ($paymentMethod instanceof PaymentMethod) {
+
+                $transactionId = $this->wrapTransactionId($transaction->transactionId);
+
+                $result = $this->apiClient->getOrder($transactionId);
+                if (array_key_exists('error', $result)) {
+                    //create order
+                    $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['transactionId' => $transactionId]);
+                    $this->getLogger('creatingOrder')->debug('Mollie::Debug.createOrder', $orderData);
+                    $result = $this->apiClient->createOrder($orderData);
+
+                    if (array_key_exists('error', $result)) {
+                        $this->getLogger('creatingOrder')->error('Mollie::Debug.createOrderIssue', $result);
+                        throw new \Exception($result['error']);
+                    }
+                }
+
+                $transactionRepository->assignMollieOrderId($result['id']);
+
+                return $result;
+            } else {
+                $this->getLogger('creatingOrder')->error('PaymentMethodNotFound', ['mopId' => $mopId]);
+            }
+        }
+    }
+
+    /**
      * @param int $orderId
      * @param null|int $mopId
      * @return array
@@ -76,9 +120,9 @@ class OrderService
                         $result = $this->apiClient->getOrder($externalOrderId);
                     } else {
                         //process payment
-                        $orderData = $this->apiOrderFactory->buildOrderData($order, $paymentMethod->paymentKey);
+                        $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['order' => $order]);
                         $this->getLogger('creatingOrder')->debug('Mollie::Debug.createOrder', $orderData);
-                        $result    = $this->apiClient->createOrder($orderData);
+                        $result = $this->apiClient->createOrder($orderData);
                     }
 
                     if (array_key_exists('error', $result)) {

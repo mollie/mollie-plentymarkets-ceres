@@ -6,7 +6,7 @@
     "de": "Mollie"
   },
   "type": "payment",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "license": "free for commercial use",
   "author": "Frontend Studios GmbH",
   "authorIcon": "icon_author_xs.png",
@@ -37,7 +37,8 @@
     "mollie/mollie-api-php": "^2.0"
   },
   "runOnBuild": [
-    "Mollie\\Migrations\\CreateMethodSettingsTable"
+    "Mollie\\Migrations\\CreateMethodSettingsTable",
+    "Mollie\\Migrations\\CreateTransactionTable"
   ],
   "dataProviders": [
     {
