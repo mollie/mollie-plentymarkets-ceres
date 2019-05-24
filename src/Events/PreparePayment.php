@@ -40,10 +40,10 @@ class PreparePayment
         if ($paymentMethod instanceof PaymentMethod) {
             try {
                 $result = $this->orderService->preparePayment($getPaymentMethodContent->getMop());
-                $getPaymentMethodContent->setType('redirectUrl');
+                $getPaymentMethodContent->setType(GetPaymentMethodContent::RETURN_TYPE_REDIRECT_URL);
                 $getPaymentMethodContent->setValue($result['_links']['checkout']['href']);
             } catch (\Exception $exception) {
-                $getPaymentMethodContent->setType('error');
+                $getPaymentMethodContent->setType(GetPaymentMethodContent::RETURN_TYPE_ERROR);
                 $getPaymentMethodContent->setValue('Internal Error');
                 $this->getLogger('creatingOrder')->logException($exception);
             }
