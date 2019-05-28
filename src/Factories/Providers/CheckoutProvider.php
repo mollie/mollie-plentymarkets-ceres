@@ -142,8 +142,8 @@ class CheckoutProvider extends OrderFactoryProvider
                     ],
                     'vatAmount'      => [
                         'currency' => $basket->currency,
-                        'value'    => number_format(($basketItem->price * ($basketItem->vat / 100.0)) * $basketItem->quantity, 2, '.', ''),
-                    ]
+                        'value'    => number_format(($basketItem->price * ($basketItem->vat / (100.0 + $basketItem->vat))) * $basketItem->quantity, 2, '.', ''),
+                    ]//(€400.00 × (19.00% / 119.00%))
                 ];
 
                 $orderData['lines'][] = $line;
