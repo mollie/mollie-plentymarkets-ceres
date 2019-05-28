@@ -69,7 +69,7 @@ class OrderService
             $paymentMethod = $this->getMolliePaymentMethod($mopId);
             if ($paymentMethod instanceof PaymentMethod) {
 
-                $transactionId = $this->wrapTransactionId($transaction->transactionId);
+                $transactionId = $this->wrapTransactionId($transaction->id);
 
                 $result = $this->apiClient->getOrder($transactionId);
                 if (array_key_exists('error', $result)) {

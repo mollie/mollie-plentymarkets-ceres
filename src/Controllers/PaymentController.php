@@ -67,7 +67,7 @@ class PaymentController extends Controller
                 //check payment status
                 $this->getLogger('checkPayment')->error(
                     'Mollie::Debug.transactionWasNotPaid',
-                    ['transactionId' => $transactionId]
+                    ['transactionId' => $transactionRepository->getTransactionId()]
                 );
 
                 return $response->redirectTo($lang . '/checkout');
@@ -77,7 +77,7 @@ class PaymentController extends Controller
             $this->getLogger('checkPayment')->error(
                 'Mollie::Debug.transactionIdDoesNotMatch',
                 [
-                    'transactionId' => $transactionId,
+                    'transactionId' => $transactionRepository->getTransactionId(),
                     'session'       => $transactionRepository->getTransactionId()
                 ]
             );

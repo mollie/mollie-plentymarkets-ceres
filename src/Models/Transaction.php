@@ -8,7 +8,7 @@ use Plenty\Modules\Plugin\DataBase\Contracts\Model;
  * Class Transaction
  * @package Mollie\Models
  *
- * @property int $transactionId
+ * @property int $id
  * @property int $orderId
  * @property int $timestamp
  * @property string $mollieOrderId
@@ -19,7 +19,7 @@ class Transaction extends Model
     /**
      * @var int
      */
-    public $transactionId = 0;
+    public $id = 0;
 
     /**
      * @var int
@@ -40,8 +40,6 @@ class Transaction extends Model
      * @var bool
      */
     public $isPaid = false;
-
-    protected $primaryKeyFieldName = 'transactionId';
 
     /**
      * @inheritdoc
