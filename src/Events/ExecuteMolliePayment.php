@@ -6,6 +6,7 @@ use Mollie\Api\ApiClient;
 use Mollie\Contracts\TransactionRepositoryContract;
 use Mollie\Services\OrderUpdateService;
 use Mollie\Traits\CanCheckMollieMethod;
+use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Order\Property\Models\OrderPropertyType;
@@ -47,16 +48,23 @@ class ExecuteMolliePayment
     private $orderUpdateService;
 
     /**
+     * @var AuthHelper
+     */
+    private $authHelper;
+
+    /**
      * ExecuteMolliePayment constructor.
      * @param FrontendSessionStorageFactoryContract $sessionStorageFactory
      * @param TransactionRepositoryContract $transactionRepository
      * @param ApiClient $apiClient
+     * @param AuthHelper $authHelper
      * @param OrderUpdateService $orderUpdateService
      * @param OrderRepositoryContract $orderRepository
      */
     public function __construct(FrontendSessionStorageFactoryContract $sessionStorageFactory,
                                 TransactionRepositoryContract $transactionRepository,
                                 ApiClient $apiClient,
+                                AuthHelper $authHelper,
                                 OrderUpdateService $orderUpdateService,
                                 OrderRepositoryContract $orderRepository)
     {
@@ -65,6 +73,7 @@ class ExecuteMolliePayment
         $this->orderRepository       = $orderRepository;
         $this->apiClient             = $apiClient;
         $this->orderUpdateService    = $orderUpdateService;
+        $this->authHelper            = $authHelper;
     }
 
     /**
@@ -107,12 +116,15 @@ class ExecuteMolliePayment
                     );
 
                     //set orderId at mollie
-                    $orderUpdateResponse = $this->apiClient->updateOrderNumber($mollieOrder['id'], $event->getOrderId());
+                    $orderUpdateResponse = $this->apiClient->updateOrderNumber($mollieOrder['id'], (STRING)$event->getOrderId());
                     $this->getLogger('updateOrderid')->debug(
                         'Mollie::Debug.mollieOrder',
                         $orderUpdateResponse
                     );
-                    $this->orderUpdateService->setPaid($this->orderRepository->findOrderById($event->getOrderId()), $mollieOrder);
+
+                    $this->authHelper->processUnguarded(function () use ($event, $mollieOrder) {
+                        $this->orderUpdateService->setPaid($this->orderRepository->findOrderById($event->getOrderId()), $mollieOrder);
+                    });
                 } else {
                     $this->getLogger('executePayment')->error(
                         'Mollie::Debug.transactionIdDoesNotMatch',
