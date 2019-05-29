@@ -77,11 +77,17 @@ class OrderUpdateService
      */
     public function updatePlentyOrder($mollieOrderId)
     {
-        $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.webhook', $mollieOrderId);
         $mollieOrder = $this->apiClient->getOrder($mollieOrderId);
+        $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.webhook', [
+                'mollieOrderId' => $mollieOrderId,
+                'mollieOrder'   => $mollieOrder
+            ]
+        );
 
         if (array_key_exists('transactionId', $mollieOrder['metadata']) && $this->isWrapped($mollieOrder['metadata']['transactionId'])) {
             //prepared for checkout
+
+            $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.webhook', 'check transaction');
 
             if (($mollieOrder['status'] == 'paid' || $mollieOrder['status'] == 'authorized')) {
                 /** @var TransactionRepositoryContract $transactionRepository */
