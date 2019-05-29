@@ -44,7 +44,7 @@ class PreparePayment
                 $getPaymentMethodContent->setValue($result['_links']['checkout']['href']);
             } catch (\Exception $exception) {
                 $getPaymentMethodContent->setType(GetPaymentMethodContent::RETURN_TYPE_ERROR);
-                $getPaymentMethodContent->setValue('Internal Error');
+                $getPaymentMethodContent->setValue($exception->getMessage());
                 $this->getLogger('creatingOrder')->logException($exception);
             }
         }
