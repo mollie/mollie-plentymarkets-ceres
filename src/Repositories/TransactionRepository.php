@@ -85,7 +85,7 @@ class TransactionRepository implements TransactionRepositoryContract
      */
     public function setTransactionPaid($transactionId)
     {
-        $transaction = $this->getTransaction();
+        $transaction = $this->dataBase->find(Transaction::class, $transactionId);
         if ($transaction instanceof Transaction) {
             $transaction->isPaid = true;
             $this->dataBase->save($transaction);
