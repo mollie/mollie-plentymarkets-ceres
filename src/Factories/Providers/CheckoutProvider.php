@@ -189,19 +189,19 @@ class CheckoutProvider extends OrderFactoryProvider
                 'vatRate'        => number_format($vatRate, 2, '.', ''),
                 'unitPrice'      => [
                     'currency' => $basket->currency,
-                    'value'    => number_format($basket->shippingAmount, 2, '.', ''),
+                    'value'    => number_format($basket->couponDiscount, 2, '.', ''),
                 ],
                 'totalAmount'    => [
                     'currency' => $basket->currency,
-                    'value'    => number_format($basket->shippingAmount, 2, '.', ''),
+                    'value'    => number_format($basket->couponDiscount, 2, '.', ''),
                 ],
                 'discountAmount' => [
                     'currency' => $basket->currency,
-                    'value'    => $basket->shippingDeleteByCoupon ? number_format(-1 * $basket->shippingAmount, 2, '.', '') : '0.00',
+                    'value'    => '0.00',
                 ],
                 'vatAmount'      => [
                     'currency' => $basket->currency,
-                    'value'    => number_format($basket->shippingAmount - $basket->shippingAmountNet, 2, '.', ''),
+                    'value'    => number_format(($basket->couponDiscount * ($vatRate / (100.0 + $vatRate))), 2, '.', ''),
                 ]
             ];
         }
