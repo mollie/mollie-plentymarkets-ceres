@@ -57,7 +57,6 @@ class OrderProvider extends OrderFactoryProvider
                 'givenName'        => $this->getName($billingAddress),
                 'familyName'       => $this->getName($billingAddress, false),
                 'email'            => $billingAddress->email,
-                'phone'            => $phoneHelper->correctPhone($billingAddress->phone, $billingAddress->country->isoCode2),
             ],
             'shippingAddress' => [
                 'organizationName' => $deliveryAddress->companyName,
@@ -82,6 +81,11 @@ class OrderProvider extends OrderFactoryProvider
             'method'          => $method,
             'lines'           => [],
         ];
+
+        $phone = $phoneHelper->correctPhone($billingAddress->phone, $billingAddress->country->isoCode2);
+        if ($phone !== false) {
+            $orderData['billingAddress']['phone'] = $phone;
+        }
 
         if (!empty($billingAddress->birthday)) {
             $orderData['consumerDateOfBirth'] = date('Y-m-d', $billingAddress->birthday);

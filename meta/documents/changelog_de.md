@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.1.1
+
+- UPDATE - Telefonnummern-Formattierung wurde überarbeitet.
+
 ## 1.1.0
 
 - UPDATE - Checkoutprozess wurde umgebaut.

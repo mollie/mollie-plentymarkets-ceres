@@ -6,7 +6,7 @@
     "de": "Mollie"
   },
   "type": "payment",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "free for commercial use",
   "author": "Frontend Studios GmbH",
   "authorIcon": "icon_author_xs.png",
@@ -34,7 +34,8 @@
   "javaScriptFiles": [],
   "require": [],
   "dependencies": {
-    "mollie/mollie-api-php": "^2.0"
+    "mollie/mollie-api-php": "^2.0",
+    "giggsey/libphonenumber-for-php": "^8.10"
   },
   "runOnBuild": [
     "Mollie\\Migrations\\CreateMethodSettingsTable",

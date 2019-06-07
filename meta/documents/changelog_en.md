@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.1.1
+
+- UPDATE - Phone number formatting refactored.
+
 ## 1.1.0
 
 - UPDATE - Checkout process was changed.
