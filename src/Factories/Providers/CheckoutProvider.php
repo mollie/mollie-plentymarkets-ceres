@@ -8,6 +8,7 @@ use Plenty\Modules\Account\Address\Contracts\AddressRepositoryContract;
 use Plenty\Modules\Account\Address\Models\Address;
 use Plenty\Modules\Basket\Contracts\BasketRepositoryContract;
 use Plenty\Modules\Basket\Models\BasketItem;
+use Plenty\Modules\Frontend\Services\VatService;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Modules\Item\Item\Contracts\ItemRepositoryContract;
 
@@ -38,6 +39,9 @@ class CheckoutProvider extends OrderFactoryProvider
 
         /** @var ItemRepositoryContract $itemContract */
         $itemContract = pluginApp(ItemRepositoryContract::class);
+
+        /** @var VatService $vatService */
+        $vatService = pluginApp(VatService::class);
 
         $domain = $this->getDomain();
 
@@ -109,9 +113,19 @@ class CheckoutProvider extends OrderFactoryProvider
             $orderData['consumerDateOfBirth'] = date('Y-m-d', $billingAddress->birthday);
         }
 
+        $isNet = false;
+        if (!count($vatService->getCurrentTotalVats())) {
+            $isNet = true;
+        }
+
         $vatRate = 0.00;
         foreach ($basket->basketItems as $basketItem) {
             if ($basketItem instanceof BasketItem) {
+
+                $basketItemPrice = $basketItem->price;
+                if ($isNet) {
+                    $basketItemPrice = round($basketItem->price * 100 / (100.0 + $basketItem->vat), 2);
+                }
 
                 /** @var \Plenty\Modules\Item\Item\Models\Item $item */
                 $item = $itemContract->show($basketItem->itemId, ['*'], $sessionStorage->getLocaleSettings()->language);
@@ -121,7 +135,7 @@ class CheckoutProvider extends OrderFactoryProvider
 
                 $discount = 0.00;
                 if ($basket->basketRebate > 0.00) {
-                    $discount = $basketItem->price * ($basket->basketRebate / 100);
+                    $discount = $basketItemPrice * ($basket->basketRebate / 100);
                 }
 
                 $vatRate = max($basketItem->vat, $vatRate);
@@ -132,14 +146,14 @@ class CheckoutProvider extends OrderFactoryProvider
                     //'productUrl'
                     //'imageUrl' => $orderItem->itemVariationI
                     'quantity'       => $basketItem->quantity,
-                    'vatRate'        => number_format($basketItem->vat, 2, '.', ''),
+                    'vatRate'        => $isNet ? '0.00' : number_format($basketItem->vat, 2, '.', ''),
                     'unitPrice'      => [
                         'currency' => $basket->currency,
-                        'value'    => number_format($basketItem->price, 2, '.', ''),
+                        'value'    => number_format($basketItemPrice, 2, '.', ''),
                     ],
                     'totalAmount'    => [
                         'currency' => $basket->currency,
-                        'value'    => number_format($basketItem->price * $basketItem->quantity, 2, '.', ''),
+                        'value'    => number_format($basketItemPrice * $basketItem->quantity, 2, '.', ''),
                     ],
                     'discountAmount' => [
                         'currency' => $basket->currency,
@@ -147,12 +161,17 @@ class CheckoutProvider extends OrderFactoryProvider
                     ],
                     'vatAmount'      => [
                         'currency' => $basket->currency,
-                        'value'    => number_format(($basketItem->price * ($basketItem->vat / (100.0 + $basketItem->vat))) * $basketItem->quantity, 2, '.', ''),
+                        'value'    => $isNet ? '0.00' : number_format(($basketItem->price * ($basketItem->vat / (100.0 + $basketItem->vat))) * $basketItem->quantity, 2, '.', ''),
                     ]
                 ];
 
                 $orderData['lines'][] = $line;
             }
+        }
+
+        $shippingAmount = $basket->shippingAmount;
+        if ($isNet) {
+            $shippingAmount = $basket->shippingAmountNet;
         }
 
         //shippingcosts
@@ -163,26 +182,32 @@ class CheckoutProvider extends OrderFactoryProvider
             //'productUrl'
             //'imageUrl' => $orderItem->itemVariationI
             'quantity'       => 1,
-            'vatRate'        => number_format($vatRate, 2, '.', ''),
+            'vatRate'        => $isNet ? '0.00' : number_format($vatRate, 2, '.', ''),
             'unitPrice'      => [
                 'currency' => $basket->currency,
-                'value'    => number_format($basket->shippingAmount, 2, '.', ''),
+                'value'    => number_format($shippingAmount, 2, '.', ''),
             ],
             'totalAmount'    => [
                 'currency' => $basket->currency,
-                'value'    => number_format($basket->shippingAmount, 2, '.', ''),
+                'value'    => number_format($shippingAmount, 2, '.', ''),
             ],
             'discountAmount' => [
                 'currency' => $basket->currency,
-                'value'    => $basket->shippingDeleteByCoupon ? number_format(-1 * $basket->shippingAmount, 2, '.', '') : '0.00',
+                'value'    => $basket->shippingDeleteByCoupon ? number_format(-1 * $shippingAmount, 2, '.', '') : '0.00',
             ],
             'vatAmount'      => [
                 'currency' => $basket->currency,
-                'value'    => number_format($basket->shippingAmount - $basket->shippingAmountNet, 2, '.', ''),
+                'value'    => $isNet ? '0.00' : number_format($basket->shippingAmount - $basket->shippingAmountNet, 2, '.', ''),
             ]
         ];
 
         if ($basket->couponDiscount != 0.00) {
+
+            $couponDiscount = $basket->couponDiscount;
+            if ($isNet) {
+                $couponDiscount = round($basket->couponDiscount * 100 / (100.0 + $vatRate), 2);
+            }
+
             //coupon
             $orderData['lines'][] = [
                 'sku'            => '0',
@@ -191,14 +216,14 @@ class CheckoutProvider extends OrderFactoryProvider
                 //'productUrl'
                 //'imageUrl' => $orderItem->itemVariationI
                 'quantity'       => 1,
-                'vatRate'        => number_format($vatRate, 2, '.', ''),
+                'vatRate'        => $isNet ? '0.00' : number_format($vatRate, 2, '.', ''),
                 'unitPrice'      => [
                     'currency' => $basket->currency,
-                    'value'    => number_format($basket->couponDiscount, 2, '.', ''),
+                    'value'    => number_format($couponDiscount, 2, '.', ''),
                 ],
                 'totalAmount'    => [
                     'currency' => $basket->currency,
-                    'value'    => number_format($basket->couponDiscount, 2, '.', ''),
+                    'value'    => number_format($couponDiscount, 2, '.', ''),
                 ],
                 'discountAmount' => [
                     'currency' => $basket->currency,
@@ -206,7 +231,7 @@ class CheckoutProvider extends OrderFactoryProvider
                 ],
                 'vatAmount'      => [
                     'currency' => $basket->currency,
-                    'value'    => number_format(($basket->couponDiscount * ($vatRate / (100.0 + $vatRate))), 2, '.', ''),
+                    'value'    => $isNet ? '0.00' : number_format(($basket->couponDiscount * ($vatRate / (100.0 + $vatRate))), 2, '.', ''),
                 ]
             ];
         }

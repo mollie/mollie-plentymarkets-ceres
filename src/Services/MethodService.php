@@ -15,6 +15,7 @@ use Plenty\Modules\Basket\Contracts\BasketRepositoryContract;
 use Plenty\Modules\Frontend\Contracts\Checkout;
 use Plenty\Modules\Frontend\Services\AccountService;
 use Plenty\Modules\Frontend\Services\AgentService;
+use Plenty\Modules\Frontend\Services\VatService;
 use Plenty\Plugin\CachingRepository;
 
 /**
@@ -173,6 +174,9 @@ class MethodService
         /** @var BasketRepositoryContract $basketRepository */
         $basketRepository = pluginApp(BasketRepositoryContract::class);
 
+        /** @var VatService $vatService */
+        $vatService = pluginApp(VatService::class);
+
 
         //billing address
         $billingAddress = null;
@@ -205,8 +209,9 @@ class MethodService
         $basket = $basketRepository->load();
 
         if ($basket->basketAmount > 0) {
+
             $filters['amount'] = [
-                'value'    => number_format($basket->basketAmount, 2, '.', ''),
+                'value'    => number_format((empty($vatService->getCurrentTotalVats()) ? $basket->basketAmountNet : $basket->basketAmount), 2, '.', ''),
                 'currency' => $basket->currency
             ];
         }
