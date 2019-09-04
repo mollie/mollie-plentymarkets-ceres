@@ -3,6 +3,8 @@
 ## 1.2.0
 
 - FIX - Netto Warenkörbe wurden fälschlicherweise dennoch mit Brutto-Beträgen an Mollie übertragen. Dieser Fehler wurde nun behoben.
+- NEW - ApplePay wurde als mögliche Zahlungsart hinzugefügt.
+- UPDATE - Es können nun Teilgutschriften an Mollie über die bestehende Ereignis-Aktion übermittelt werden.
 - UPDATE - Die Ermittlung der E-Mail Adresse wurde erweitert. Sollte die Rechnungsadresse keine E-Mail beinhalten, wird nun alternativ die E-Mail
 des Kontakts übertragen.
 - UPDATE - Die Übermittlung der plentymarkets Auftrags Id wurde erweitert. Die Auftrags Id wird nun zusätzlich bei Transaktionen aktualisiert.
