@@ -10,6 +10,7 @@ use Mollie\Events\PreparePayment;
 use Mollie\Factories\ApiOrderFactory;
 use Mollie\Factories\Providers\CheckoutProvider;
 use Mollie\Factories\Providers\OrderProvider;
+use Mollie\PaymentMethods\PaymentApplePay;
 use Mollie\PaymentMethods\PaymentBancontact;
 use Mollie\PaymentMethods\PaymentBanktransfer;
 use Mollie\PaymentMethods\PaymentBelfius;
@@ -71,6 +72,7 @@ class ServiceProvider extends PlentyServiceProvider
         'paypal'         => PaymentPaypal::class,
         'paysafecard'    => PaymentPaySafeCard::class,
         'sofort'         => PaymentSofort::class,
+        'applepay'       => PaymentApplePay::class,
     ];
 
     /**
