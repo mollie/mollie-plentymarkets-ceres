@@ -46,6 +46,11 @@ class MethodService
     private $cachingRepository;
 
     /**
+     * @var bool
+     */
+    private $isRequesting = false;
+
+    /**
      * MethodService constructor.
      * @param ApiClient $apiClient
      * @param MethodSettingsRepositoryContract $methodSettingsRepository
@@ -65,8 +70,12 @@ class MethodService
      */
     public function getMethodsForCheckout()
     {
-        if (is_null($this->frontendMethodsCache)) {
+        if($this->isRequesting){
+            return [];
+        }
 
+        if (is_null($this->frontendMethodsCache)) {
+            $this->isRequesting = true;
             $filters = $this->buildFrontendFilters();
 
 
@@ -100,7 +109,7 @@ class MethodService
                 $this->frontendMethodsCache = $this->mergeSettingsIntoMethods($methodsDataList, $methodSettingsMap, true);
             }
         }
-
+        $this->isRequesting = false;
         return $this->frontendMethodsCache;
     }
 

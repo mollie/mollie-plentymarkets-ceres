@@ -71,14 +71,16 @@ class ApiClient
 
     /**
      * @param string $orderId
+     * @param bool $withPayments
      * @return array
      */
-    public function getOrder($orderId)
+    public function getOrder($orderId, $withPayments = false)
     {
         return $this->libraryCallContract->call(
             'Mollie::GetOrder', [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
+                'withPayments'  => $withPayments,
                 'orderId'       => $orderId
             ]
         );
@@ -112,6 +114,23 @@ class ApiClient
                 'pluginVersion'  => self::PLUGIN_VERSION,
                 'apiKey'         => $this->getApiKey(),
                 'orderId'        => $orderId,
+                'newOrderNumber' => $newOrderNumber
+            ]
+        );
+    }
+
+    /**
+     * @param string $paymentId
+     * @param string $newOrderNumber
+     * @return array
+     */
+    public function updateOrderNumberAtPayment($paymentId, $newOrderNumber)
+    {
+        return $this->libraryCallContract->call(
+            'Mollie::UpdatePayment', [
+                'pluginVersion'  => self::PLUGIN_VERSION,
+                'apiKey'         => $this->getApiKey(),
+                'paymentId'      => $paymentId,
                 'newOrderNumber' => $newOrderNumber
             ]
         );

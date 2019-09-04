@@ -13,6 +13,7 @@ try {
             'amount'         => SdkRestApi::getParam('amount'),
             'resource'       => SdkRestApi::getParam('resource'),
             'billingCountry' => SdkRestApi::getParam('billingCountry'),
+            'includeWallets' => 'applepay'
         ]
     );
 } catch (\Exception $e) {

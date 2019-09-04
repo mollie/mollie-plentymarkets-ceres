@@ -11,6 +11,8 @@ use Mollie\Traits\CanHandleTransactionId;
 use Plenty\Exceptions\ValidationException;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Order\Models\Order;
+use Plenty\Modules\Order\Models\OrderAmount;
+use Plenty\Modules\Order\Models\OrderItem;
 use Plenty\Modules\Order\Property\Models\OrderProperty;
 use Plenty\Modules\Order\Property\Models\OrderPropertyType;
 use Plenty\Modules\Payment\Method\Models\PaymentMethod;
@@ -172,7 +174,35 @@ class OrderService
         $externalOrderId = $this->getExternalOrderId($order);
 
         if (!empty($externalOrderId)) {
-            $result = $this->apiClient->createRefund($externalOrderId, ['lines' => []]);
+            $mollieOrder = $this->apiClient->getOrder($externalOrderId);
+
+            /** @var OrderAmount $orderAmount */
+            $orderAmount = $order->amount;
+
+            if ($mollieOrder['amount'] == number_format($orderAmount->invoiceTotal, 2, '.', '')) {
+                //full refund
+                $result = $this->apiClient->createRefund($externalOrderId, ['lines' => []]);
+            } else {
+                //partial refund
+
+                $lines = [];
+                foreach ($order->orderItems as $orderItem) {
+                    /** @var OrderItem $orderItem */
+
+                    foreach ($mollieOrder['lines'] as $mollieOrderLine) {
+                        if ($mollieOrderLine['sku'] == $orderItem->itemVariationId) {
+                            $lines[] = [
+                                'id'       => $mollieOrderLine['id'],
+                                'quantity' => $orderItem->quantity
+                            ];
+                        }
+                    }
+                }
+
+                $result = $this->apiClient->createRefund($externalOrderId, ['lines' => $lines]);
+            }
+
+
             if (array_key_exists('error', $result)) {
                 $this->getLogger('createRefund')->error('Mollie::Debug.createRefundIssue', $result);
             }

@@ -3,7 +3,6 @@
 namespace Mollie\Controllers;
 
 use Mollie\Contracts\TransactionRepositoryContract;
-use Mollie\Repositories\TransactionRepository;
 use Mollie\Services\OrderService;
 use Mollie\Services\OrderUpdateService;
 use Mollie\Traits\CanHandleTransactionId;
@@ -84,5 +83,13 @@ class PaymentController extends Controller
 
             return $response->redirectTo($lang . '/checkout');
         }
+    }
+
+    /**
+     * @param FrontendSessionStorageFactoryContract $frontendSessionStorageFactory
+     */
+    public function activateApplePay(FrontendSessionStorageFactoryContract $frontendSessionStorageFactory)
+    {
+        $frontendSessionStorageFactory->getPlugin()->setValue('mollie_apple_pay_active', true);
     }
 }

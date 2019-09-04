@@ -37,6 +37,7 @@ class RouteServiceProvider extends PlentyRouteServiceProvider
             function ($apiRouter) {
 
                 //Frontend routes
+                $apiRouter->put('mollie/activate_apple_pay', 'PaymentController@activateApplePay');
                 $apiRouter->get('mollie/init_payment', 'PaymentController@reInit');
                 $apiRouter->post('mollie/webhook', 'PaymentController@webHook');
             }

@@ -8,6 +8,11 @@ try {
 
     $apiClient->setApiKey(SdkRestApi::getParam('apiKey'));
 
+    $params = [];
+    if(SdkRestApi::getParam('withPayments')){
+        $params['embed'] = 'payments';
+    }
+
     return $apiClient->orders->get(SdkRestApi::getParam('orderId'));
 
 } catch (\Exception $e) {

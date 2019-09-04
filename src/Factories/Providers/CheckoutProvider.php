@@ -6,8 +6,11 @@ use Mollie\Contracts\OrderFactoryProvider;
 use Mollie\Helpers\PhoneHelper;
 use Plenty\Modules\Account\Address\Contracts\AddressRepositoryContract;
 use Plenty\Modules\Account\Address\Models\Address;
+use Plenty\Modules\Account\Contact\Contracts\ContactRepositoryContract;
+use Plenty\Modules\Account\Contact\Models\Contact;
 use Plenty\Modules\Basket\Contracts\BasketRepositoryContract;
 use Plenty\Modules\Basket\Models\BasketItem;
+use Plenty\Modules\Frontend\Services\AccountService;
 use Plenty\Modules\Frontend\Services\VatService;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Modules\Item\Item\Contracts\ItemRepositoryContract;
@@ -37,8 +40,14 @@ class CheckoutProvider extends OrderFactoryProvider
         /** @var FrontendSessionStorageFactoryContract $sessionStorage */
         $sessionStorage = pluginApp(FrontendSessionStorageFactoryContract::class);
 
+        /** @var AccountService $accountService */
+        $accountService = pluginApp(AccountService::class);
+
         /** @var ItemRepositoryContract $itemContract */
         $itemContract = pluginApp(ItemRepositoryContract::class);
+
+        /** @var ContactRepositoryContract $contactRepository */
+        $contactRepository = pluginApp(ContactRepositoryContract::class);
 
         /** @var VatService $vatService */
         $vatService = pluginApp(VatService::class);
@@ -60,6 +69,20 @@ class CheckoutProvider extends OrderFactoryProvider
         /** @var Address $deliveryAddress */
         $deliveryAddress = $addressRepository->findAddressById($deliveryAddressId);
 
+        $email = $billingAddress->email;
+
+        //if the billing address doesn't contain an email, use contact mail instead
+        if (empty($email)) {
+            $contactId = $accountService->getAccountContactId();
+
+            if (!empty($contactId) && $contactId > 0) {
+                $contact = $contactRepository->findContactById($contactId);
+
+                if ($contact instanceof Contact) {
+                    $email = $contact->email;
+                }
+            }
+        }
 
         $orderData = [
             'amount'          => [
@@ -76,7 +99,7 @@ class CheckoutProvider extends OrderFactoryProvider
                 'title'            => $billingAddress->title,
                 'givenName'        => $this->getName($billingAddress),
                 'familyName'       => $this->getName($billingAddress, false),
-                'email'            => $billingAddress->email,
+                'email'            => $email,
             ],
             'shippingAddress' => [
                 'organizationName' => $deliveryAddress->companyName,
@@ -89,7 +112,7 @@ class CheckoutProvider extends OrderFactoryProvider
                 'title'            => $deliveryAddress->title,
                 'givenName'        => $this->getName($deliveryAddress),
                 'familyName'       => $this->getName($deliveryAddress, false),
-                'email'            => $deliveryAddress->email,
+                'email'            => $email,
             ],
             'metadata'        => [
                 'orderId'       => null,

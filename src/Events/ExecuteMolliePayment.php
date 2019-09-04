@@ -88,7 +88,7 @@ class ExecuteMolliePayment
                 if ($this->transactionRepository->openTransactionExists()) {
 
                     //check if mollie order still exists
-                    $mollieOrder = $this->apiClient->getOrder($this->transactionRepository->getTransaction()->mollieOrderId);
+                    $mollieOrder = $this->apiClient->getOrder($this->transactionRepository->getTransaction()->mollieOrderId, true);
                     if (array_key_exists('error', $mollieOrder)) {
                         $this->getLogger('executePayment')->error(
                             'Mollie::Debug.transactionIdDoesNotMatch',
@@ -121,6 +121,14 @@ class ExecuteMolliePayment
                         'Mollie::Debug.mollieOrder',
                         $orderUpdateResponse
                     );
+
+                    foreach ($mollieOrder['_embedded']['payments'] as $payment) {
+                        $updatePaymentsResponse = $this->apiClient->updateOrderNumberAtPayment($payment['id'], (STRING)$event->getOrderId());
+                        $this->getLogger('updatePaymentId')->debug(
+                            'Mollie::Debug.mollieOrder',
+                            $updatePaymentsResponse
+                        );
+                    }
 
                     $this->authHelper->processUnguarded(function () use ($event, $mollieOrder) {
                         $this->orderUpdateService->setPaid($this->orderRepository->findOrderById($event->getOrderId()), $mollieOrder);

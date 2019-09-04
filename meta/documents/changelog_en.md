@@ -1,5 +1,12 @@
 # Release Notes for Mollie
 
+## 1.2.0
+
+- FIX - The basket gross amounts were transfered always, even for net amount baskets. This issue was fixed in this patch.
+- UPDATE - The loading of the email address was extended. In the case that the invoice address doens't contain an email, the email
+of the contact is being used as a fallback.
+- UPDATE - The update of the plentymarkets order id at mollie was extended. The order id will now be additional updated at mollie transactions.
+
 ## 1.1.1
 
 - UPDATE - Phone number formatting refactored.
