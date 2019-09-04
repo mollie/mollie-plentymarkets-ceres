@@ -12,7 +12,7 @@ try {
 
         $body = json_encode(
             [
-                'description' => 'OID ' . SdkRestApi::getParam('newOrderNumber'),
+                'description' => 'OrderID ' . SdkRestApi::getParam('newOrderNumber'),
                 'metadata'    => [
                     'orderId' => SdkRestApi::getParam('newOrderNumber')
                 ]
