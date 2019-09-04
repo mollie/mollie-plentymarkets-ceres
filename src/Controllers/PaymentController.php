@@ -91,5 +91,6 @@ class PaymentController extends Controller
     public function activateApplePay(FrontendSessionStorageFactoryContract $frontendSessionStorageFactory)
     {
         $frontendSessionStorageFactory->getPlugin()->setValue('mollie_apple_pay_active', true);
+        return $frontendSessionStorageFactory->getPlugin()->getValue('mollie_apple_pay_active');
     }
 }
