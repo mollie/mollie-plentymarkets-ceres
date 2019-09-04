@@ -13,7 +13,7 @@ try {
         $params['embed'] = 'payments';
     }
 
-    return $apiClient->orders->get(SdkRestApi::getParam('orderId'));
+    return $apiClient->orders->get(SdkRestApi::getParam('orderId'), $params);
 
 } catch (\Exception $e) {
     return ['error' => $e->getMessage()];
