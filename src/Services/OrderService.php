@@ -77,7 +77,6 @@ class OrderService
                 if (array_key_exists('error', $result)) {
                     //create order
                     $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['transactionId' => $transactionId]);
-                    $this->getLogger('creatingOrder')->debug('Mollie::Debug.createOrder', $orderData);
                     $result = $this->apiClient->createOrder($orderData);
 
                     if (array_key_exists('error', $result)) {
@@ -118,12 +117,22 @@ class OrderService
 
                     $externalOrderId = $this->getExternalOrderId($order);
 
+                    $result = [];
+                    //check if order already exists and still can be used to be paid
                     if (!empty($externalOrderId)) {
-                        $result = $this->apiClient->getOrder($externalOrderId);
-                    } else {
+                        $mollieOrder = $this->apiClient->getOrder($externalOrderId);
+                        if (!array_key_exists('error', $mollieOrder)) {
+                            if ($mollieOrder['status'] == 'created') {
+                                $result = $mollieOrder;
+                            } elseif (!in_array($mollieOrder['status'], ['expired', 'canceled'])) {
+                                throw new \Exception('Order can not be paid');
+                            }
+                        }
+                    }
+
+                    if (empty($result)) {
                         //process payment
                         $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['order' => $order]);
-                        $this->getLogger('creatingOrder')->debug('Mollie::Debug.createOrder', $orderData);
                         $result = $this->apiClient->createOrder($orderData);
                     }
 

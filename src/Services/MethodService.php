@@ -70,13 +70,13 @@ class MethodService
      */
     public function getMethodsForCheckout()
     {
-        if($this->isRequesting){
+        if ($this->isRequesting) {
             return [];
         }
 
         if (is_null($this->frontendMethodsCache)) {
             $this->isRequesting = true;
-            $filters = $this->buildFrontendFilters();
+            $filters            = $this->buildFrontendFilters();
 
 
             //if basket amount is empty, try to load from cache
@@ -190,16 +190,14 @@ class MethodService
         //billing address
         $billingAddress = null;
 
-        if ($accountService->getAccountContactId()) {
+        if ($checkout->getCustomerInvoiceAddressId()) {
+            /** @var AddressRepositoryContract $addressRepository */
+            $addressRepository = pluginApp(AddressRepositoryContract::class);
+            $billingAddress    = $addressRepository->findAddressById($checkout->getCustomerInvoiceAddressId());
+        } elseif ($accountService->getAccountContactId()) {
             /** @var ContactAddressRepositoryContract $contactAddressRepository */
             $contactAddressRepository = pluginApp(ContactAddressRepositoryContract::class);
             $billingAddress           = $contactAddressRepository->getAddresses($accountService->getAccountContactId(), AddressRelationType::BILLING_ADDRESS)[0];
-        } else {
-            if ($checkout->getCustomerInvoiceAddressId()) {
-                /** @var AddressRepositoryContract $addressRepository */
-                $addressRepository = pluginApp(AddressRepositoryContract::class);
-                $billingAddress    = $addressRepository->findAddressById($checkout->getCustomerInvoiceAddressId());
-            }
         }
 
         if ($billingAddress instanceof Address) {

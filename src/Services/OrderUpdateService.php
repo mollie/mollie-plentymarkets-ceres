@@ -99,8 +99,6 @@ class OrderUpdateService
             $plentyOrder = $this->orderRepository->findOrderByExternalOrderId($mollieOrderId);
             if ($plentyOrder instanceof Order) {
 
-                $this->getLogger('updatePlentyOrder')->debug('Mollie::Debug.mollieOrder', $mollieOrder);
-
                 if ($mollieOrder['metadata']['orderId'] != $plentyOrder->id) {
                     throw new \Exception('Orders don\'t match');
                 }

@@ -43,8 +43,9 @@ class ApiClient
      */
     public function createOrder($orderData)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::CreateOrder', [
+        return $this->processApiCall(
+            'Mollie::CreateOrder',
+            [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'orderData'     => $orderData
@@ -59,8 +60,9 @@ class ApiClient
      */
     public function createShipment($orderId, $shipmentData)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::CreateShipment', [
+        return $this->processApiCall(
+            'Mollie::CreateShipment',
+            [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'orderId'       => (STRING)$orderId,
@@ -76,8 +78,9 @@ class ApiClient
      */
     public function getOrder($orderId, $withPayments = false)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::GetOrder', [
+        return $this->processApiCall(
+            'Mollie::GetOrder',
+            [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'withPayments'  => $withPayments,
@@ -93,8 +96,9 @@ class ApiClient
      */
     public function cancelOrder($orderId)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::CancelOrder', [
+        return $this->processApiCall(
+            'Mollie::CancelOrder',
+            [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'orderId'       => $orderId
@@ -109,8 +113,9 @@ class ApiClient
      */
     public function updateOrderNumber($orderId, $newOrderNumber)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::UpdateOrder', [
+        return $this->processApiCall(
+            'Mollie::UpdateOrder',
+            [
                 'pluginVersion'  => self::PLUGIN_VERSION,
                 'apiKey'         => $this->getApiKey(),
                 'orderId'        => $orderId,
@@ -126,8 +131,9 @@ class ApiClient
      */
     public function updateOrderNumberAtPayment($paymentId, $newOrderNumber)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::UpdatePayment', [
+        return $this->processApiCall(
+            'Mollie::UpdatePayment',
+            [
                 'pluginVersion'  => self::PLUGIN_VERSION,
                 'apiKey'         => $this->getApiKey(),
                 'paymentId'      => $paymentId,
@@ -143,8 +149,9 @@ class ApiClient
      */
     public function createRefund($orderId, $refundData)
     {
-        return $this->libraryCallContract->call(
-            'Mollie::CreateRefund', [
+        return $this->processApiCall(
+            'Mollie::CreateRefund',
+            [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'orderId'       => (STRING)$orderId,
@@ -158,8 +165,9 @@ class ApiClient
      */
     public function getAllAvailableMethods()
     {
-        return $this->libraryCallContract->call(
-            'Mollie::Methods', [
+        return $this->processApiCall(
+            'Mollie::Methods',
+            [
                 'pluginVersion' => self::PLUGIN_VERSION,
                 'apiKey'        => $this->getApiKey(),
                 'resource'      => 'orders'
@@ -173,7 +181,7 @@ class ApiClient
      */
     public function getMethods(array $params)
     {
-        return $this->libraryCallContract->call(
+        return $this->processApiCall(
             'Mollie::Methods',
             array_merge(
                 [
@@ -184,6 +192,19 @@ class ApiClient
                 $params
             )
         );
+    }
+
+    /**
+     * @param string $libCall
+     * @param array $params
+     * @return array
+     */
+    private function processApiCall($libCall, $params)
+    {
+        $this->getLogger($libCall)->debug('Mollie::Debug.apiRequest', $params);
+        $response = $this->libraryCallContract->call($libCall, $params);
+        $this->getLogger($libCall)->debug('Mollie::Debug.apiResponse', $response);
+        return $response;
     }
 
     /**

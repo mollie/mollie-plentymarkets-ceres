@@ -1,5 +1,10 @@
 # Release Notes für Mollie
 
+## 1.2.1
+
+- NEW - Es wurden neue logs eingebaut um die Kommunikation mit der Mollie-API besser nachvollziehen zu können.
+- FIX - Es gab ein Problem die Zahlung erneut auszuführen, wenn der Auftrag über den Bestellbestätigungslink geöffnet wurde. Dieser fehler wurde nun behoben.
+
 ## 1.2.0
 
 - FIX - Netto Warenkörbe wurden fälschlicherweise dennoch mit Brutto-Beträgen an Mollie übertragen. Dieser Fehler wurde nun behoben.

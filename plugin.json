@@ -6,7 +6,7 @@
     "de": "Mollie"
   },
   "type": "payment",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "free for commercial use",
   "author": "Frontend Studios GmbH",
   "authorIcon": "icon_author_xs.png",

@@ -23,13 +23,16 @@ class PaymentController extends Controller
 
     /**
      * @param OrderService $orderService
+     * @param AuthHelper $authHelper
      * @param Request $request
      * @return array
      * @throws \Exception
      */
-    public function reInit(OrderService $orderService, Request $request)
+    public function reInit(OrderService $orderService, AuthHelper $authHelper, Request $request)
     {
-        return $orderService->prepareOrder($request->get('orderId'));
+        return $authHelper->processUnguarded(function () use ($orderService, $request) {
+            return $orderService->prepareOrder($request->get('orderId'));
+        });
     }
 
     /**

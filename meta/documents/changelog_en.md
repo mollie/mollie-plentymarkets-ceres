@@ -1,5 +1,10 @@
 # Release Notes for Mollie
 
+## 1.2.1
+
+- NEW - New logs were added to have a better overview of the mollie api communication.
+- FIX - When opening an unpaid order over a confirmation url, the payment process could not be initiated. This issue was solved.
+
 ## 1.2.0
 
 - FIX - The basket gross amounts were transfered always, even for net amount baskets. This issue was fixed in this patch.
