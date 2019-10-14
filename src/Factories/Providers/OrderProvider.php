@@ -96,6 +96,7 @@ class OrderProvider extends OrderFactoryProvider
             if ($orderItem instanceof OrderItem) {
                 /** @var OrderItemAmount $amount */
                 $amount = $orderItem->amount;
+                $discountAmount = ($amount->priceOriginalGross - $amount->priceGross) * $orderItem->quantity;
                 $line   = [
                     'sku'            => (STRING)$orderItem->itemVariationId,
                     'name'           => $orderItem->orderItemName,
@@ -109,11 +110,11 @@ class OrderProvider extends OrderFactoryProvider
                     ],
                     'totalAmount'    => [
                         'currency' => $amount->currency,
-                        'value'    => number_format($amount->priceGross * $orderItem->quantity, 2, '.', ''),
+                        'value'    => number_format( (($amount->priceGross * $orderItem->quantity) - $discountAmount), 2, '.', ''),
                     ],
                     'discountAmount' => [
                         'currency' => $amount->currency,
-                        'value'    => number_format(($amount->priceOriginalGross - $amount->priceGross) * $orderItem->quantity, 2, '.', ''),
+                        'value'    => number_format($discountAmount, 2, '.', ''),
                     ],
                     'vatAmount'      => [
                         'currency' => $amount->currency,
