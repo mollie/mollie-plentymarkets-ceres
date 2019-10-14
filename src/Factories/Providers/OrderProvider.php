@@ -110,7 +110,7 @@ class OrderProvider extends OrderFactoryProvider
                     ],
                     'totalAmount'    => [
                         'currency' => $amount->currency,
-                        'value'    => number_format( (($amount->priceGross * $orderItem->quantity) - $discountAmount), 2, '.', ''),
+                        'value'    => number_format( $amount->priceOriginalGross * $orderItem->quantity, 2, '.', ''),
                     ],
                     'discountAmount' => [
                         'currency' => $amount->currency,
