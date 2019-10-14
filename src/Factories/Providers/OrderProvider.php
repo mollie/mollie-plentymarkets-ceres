@@ -106,11 +106,11 @@ class OrderProvider extends OrderFactoryProvider
                     'vatRate'        => number_format($orderItem->vatRate, 2, '.', ''),
                     'unitPrice'      => [
                         'currency' => $amount->currency,
-                        'value'    => number_format($amount->priceGross, 2, '.', ''),
+                        'value'    => number_format($amount->priceOriginalGross, 2, '.', ''),
                     ],
                     'totalAmount'    => [
                         'currency' => $amount->currency,
-                        'value'    => number_format( $amount->priceOriginalGross * $orderItem->quantity, 2, '.', ''),
+                        'value'    => number_format( (($amount->priceGross * $orderItem->quantity) - $discountAmount), 2, '.', ''),
                     ],
                     'discountAmount' => [
                         'currency' => $amount->currency,
