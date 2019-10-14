@@ -13,6 +13,7 @@ use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Models\OrderAmount;
 use Plenty\Modules\Order\Models\OrderItem;
+use Plenty\Modules\Order\Models\OrderItemAmount;
 use Plenty\Modules\Order\Property\Models\OrderProperty;
 use Plenty\Modules\Order\Property\Models\OrderPropertyType;
 use Plenty\Modules\Payment\Method\Models\PaymentMethod;
@@ -77,7 +78,7 @@ class OrderService
                 if (array_key_exists('error', $result)) {
                     //create order
                     $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['transactionId' => $transactionId]);
-                    $result = $this->apiClient->createOrder($orderData);
+                    $result    = $this->apiClient->createOrder($orderData);
 
                     if (array_key_exists('error', $result)) {
                         $this->getLogger('creatingOrder')->error('Mollie::Debug.createOrderIssue', $result);
@@ -133,7 +134,7 @@ class OrderService
                     if (empty($result)) {
                         //process payment
                         $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['order' => $order]);
-                        $result = $this->apiClient->createOrder($orderData);
+                        $result    = $this->apiClient->createOrder($orderData);
                     }
 
                     if (array_key_exists('error', $result)) {
@@ -200,10 +201,21 @@ class OrderService
 
                     foreach ($mollieOrder['lines'] as $mollieOrderLine) {
                         if ($mollieOrderLine['sku'] == $orderItem->itemVariationId) {
-                            $lines[] = [
+
+                            /** @var OrderItemAmount $amount */
+                            $amount = $orderItem->amount;
+
+                            $discountAvailable = $amount->priceOriginalGross != $amount->priceGross;
+                            $orderLine         = [
                                 'id'       => $mollieOrderLine['id'],
                                 'quantity' => $orderItem->quantity
                             ];
+
+                            if ($discountAvailable) {
+                                $orderLine['amount'] = number_format($amount->priceGross * $orderItem->quantity, 2, '.', '');
+                            }
+
+                            $lines[] = $orderLine;
                         }
                     }
                 }
