@@ -14,6 +14,7 @@ use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Models\OrderAmount;
 use Plenty\Modules\Order\Models\OrderItem;
 use Plenty\Modules\Order\Models\OrderItemAmount;
+use Plenty\Modules\Order\Models\OrderItemType;
 use Plenty\Modules\Order\Property\Models\OrderProperty;
 use Plenty\Modules\Order\Property\Models\OrderPropertyType;
 use Plenty\Modules\Payment\Method\Models\PaymentMethod;
@@ -211,7 +212,7 @@ class OrderService
                                 'quantity' => $orderItem->quantity
                             ];
 
-                            if ($discountAvailable) {
+                            if ($discountAvailable || $orderItem->typeId == OrderItemType::TYPE_SHIPPING_COSTS) {
                                 $orderLine['amount'] = number_format($amount->priceGross * $orderItem->quantity, 2, '.', '');
                             }
 
