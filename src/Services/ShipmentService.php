@@ -7,6 +7,7 @@ use Mollie\Factories\ApiOrderFactory;
 use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Property\Models\OrderProperty;
 use Plenty\Modules\Order\Property\Models\OrderPropertyType;
+use Plenty\Plugin\Log\Loggable;
 
 /**
  * Class ShipmentService
@@ -14,6 +15,8 @@ use Plenty\Modules\Order\Property\Models\OrderPropertyType;
  */
 class ShipmentService
 {
+    use Loggable;
+    
     /**
      * @var ApiOrderFactory
      */
