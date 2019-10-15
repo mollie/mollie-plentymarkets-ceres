@@ -51,7 +51,11 @@ class ShipmentService
 
         if (!empty($externalOrderId)) {
             $shipmentData = $this->apiOrderFactory->buildShipmentData($order);
-            $this->apiClient->createShipment($externalOrderId, $shipmentData);
+            $result = $this->apiClient->createShipment($externalOrderId, $shipmentData);
+
+            if (array_key_exists('error', $result)) {
+                $this->getLogger('register shipment')->error('Mollie::Debug.shipOrderIssue', $result);
+            }
         }
     }
 }

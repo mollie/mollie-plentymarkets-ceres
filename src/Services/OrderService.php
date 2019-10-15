@@ -213,7 +213,12 @@ class OrderService
                             ];
 
                             if ($discountAvailable || $orderItem->typeId == OrderItemType::TYPE_SHIPPING_COSTS) {
-                                $orderLine['amount'] = number_format($amount->priceGross * $orderItem->quantity, 2, '.', '');
+                                $orderLine['amount'] = [
+                                    'value'    => number_format($amount->priceGross * $orderItem->quantity, 2, '.', ''),
+                                    'currency' => $amount->currency
+                                ];
+
+
                             }
 
                             $lines[] = $orderLine;
