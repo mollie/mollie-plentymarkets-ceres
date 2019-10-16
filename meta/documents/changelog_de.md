@@ -1,5 +1,12 @@
 # Release Notes für Mollie
 
+## 1.2.2
+
+- FIX - Es gab ein Problem mit den Zahlungsvorgang für bestehende Aufträge mit enthaltenen Rabatten auszuführen. Dieses Problem wurde behoben.
+- FIX - Teilgutschriften konnten für Aufträge die einen Rabatt enthalten nicht registriert werden. Dieser Fehler wurde behoben.
+- NEW - Die Übermittlung von Teilgutschriften und Versandmeldungen wurde überarbeitet um abgelehnte Anmeldungen besser nachvollziehen zu können.
+
+
 ## 1.2.1
 
 - NEW - Es wurden neue logs eingebaut um die Kommunikation mit der Mollie-API besser nachvollziehen zu können.

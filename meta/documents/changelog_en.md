@@ -1,5 +1,11 @@
 # Release Notes for Mollie
 
+## 1.2.2
+
+- FIX - The payment process could not be started for existing orders including a rebate.  This issue is solved now.
+- FIX - Partial refunds could not be registered for orders including a rebate. This issue is solved now.
+- NEW - The transfer of partial refunds and shipment notifications was refactored to extend the debugging of declined requests.
+
 ## 1.2.1
 
 - NEW - New logs were added to have a better overview of the mollie api communication.
