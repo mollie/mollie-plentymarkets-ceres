@@ -126,6 +126,9 @@ class CheckoutProvider extends OrderFactoryProvider
             'lines'           => [],
         ];
 
+        if (array_key_exists('ccToken', $options)) {
+            $orderData['payment']['cardToken'] = $options['ccToken'];
+        }
 
         $phone = $phoneHelper->correctPhone($billingAddress->phone, $billingAddress->country->isoCode2);
         if ($phone !== false) {

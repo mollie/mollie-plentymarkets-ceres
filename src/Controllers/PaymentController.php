@@ -7,6 +7,7 @@ use Mollie\Services\OrderService;
 use Mollie\Services\OrderUpdateService;
 use Mollie\Traits\CanHandleTransactionId;
 use Plenty\Modules\Authorization\Services\AuthHelper;
+use Plenty\Modules\Frontend\Contracts\Checkout;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Http\Request;
@@ -56,7 +57,9 @@ class PaymentController extends Controller
      * @param $transactionId
      * @return mixed
      */
-    public function checkPayment(FrontendSessionStorageFactoryContract $frontendSessionStorageFactory, Response $response, TransactionRepositoryContract $transactionRepository)
+    public function checkPayment(FrontendSessionStorageFactoryContract $frontendSessionStorageFactory,
+                                 Response $response,
+                                 TransactionRepositoryContract $transactionRepository)
     {
         $lang = $frontendSessionStorageFactory->getLocaleSettings()->language;
 
@@ -96,5 +99,29 @@ class PaymentController extends Controller
     {
         $frontendSessionStorageFactory->getPlugin()->setValue('mollie_apple_pay_active', true);
         return [];
+    }
+
+    /**
+     * @param FrontendSessionStorageFactoryContract $frontendSessionStorageFactory
+     * @param Request $request
+     * @param Response $response
+     * @param Checkout $checkout
+     * @param OrderService $orderService
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
+     */
+    public function createOrderByCreditCard(FrontendSessionStorageFactoryContract $frontendSessionStorageFactory,
+                                            Request $request,
+                                            Response $response,
+                                            Checkout $checkout,
+                                            OrderService $orderService)
+    {
+        $lang   = $frontendSessionStorageFactory->getLocaleSettings()->language;
+        $result = $orderService->preparePayment($checkout->getPaymentMethodId(), $request->get('mollie-cc-token'));
+        if (array_key_exists('error', $result) || empty($result['_links']['checkout']['href'])) {
+            return $response->redirectTo($lang . '/checkout');
+        } else {
+            return $response->redirectTo($result['_links']['checkout']['href']);
+        }
     }
 }

@@ -45,6 +45,7 @@ use Plenty\Modules\Frontend\Events\FrontendShippingCountryChanged;
 use Plenty\Modules\Payment\Events\Checkout\ExecutePayment;
 use Plenty\Modules\Payment\Events\Checkout\GetPaymentMethodContent;
 use Plenty\Modules\Payment\Method\Contracts\PaymentMethodContainer;
+use Plenty\Plugin\ConfigRepository;
 use Plenty\Plugin\Events\Dispatcher;
 use Plenty\Plugin\ServiceProvider as PlentyServiceProvider;
 
@@ -89,42 +90,45 @@ class ServiceProvider extends PlentyServiceProvider
 
     /**
      * @param PaymentMethodContainer $paymentMethodContainer
+     * @param ConfigRepository $configRepository
      * @param Dispatcher $dispatcher
      */
-    public function boot(PaymentMethodContainer $paymentMethodContainer, Dispatcher $dispatcher)
+    public function boot(PaymentMethodContainer $paymentMethodContainer, ConfigRepository $configRepository, Dispatcher $dispatcher)
     {
-        foreach ($this->paymentMethods as $methodId => $paymentMethodClass) {
-            //register payment service
-            $paymentMethodContainer->register(
-                'Mollie::' . $methodId,
-                $paymentMethodClass,
-                [
-                    AfterBasketChanged::class,
-                    AfterBasketItemAdd::class,
-                    AfterBasketCreate::class,
-                    FrontendLanguageChanged::class,
-                    FrontendCustomerAddressChanged::class,
-                    FrontendShippingCountryChanged::class
-                ]
+        if ($configRepository->get('Mollie.isFrontendInactive') != 'true') {
+            foreach ($this->paymentMethods as $methodId => $paymentMethodClass) {
+                //register payment service
+                $paymentMethodContainer->register(
+                    'Mollie::' . $methodId,
+                    $paymentMethodClass,
+                    [
+                        AfterBasketChanged::class,
+                        AfterBasketItemAdd::class,
+                        AfterBasketCreate::class,
+                        FrontendLanguageChanged::class,
+                        FrontendCustomerAddressChanged::class,
+                        FrontendShippingCountryChanged::class
+                    ]
+                );
+            }
+
+            // Listen for the event that gets the payment method content
+            $dispatcher->listen(GetPaymentMethodContent::class, PreparePayment::class);
+            $dispatcher->listen(ExecutePayment::class, ExecuteMolliePayment::class);
+
+            //listen to Ceres/IO events to register resources
+            $dispatcher->listen(
+                'IO.Resources.Import',
+                function ($resourceContainer) use ($configRepository){
+
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $resourceContainer->addScriptTemplate('Mollie::Scripts');
+
+                    /** @noinspection PhpUndefinedMethodInspection */
+                    $resourceContainer->addStyleTemplate('Mollie::Styles');
+                }
             );
         }
-
-        // Listen for the event that gets the payment method content
-        $dispatcher->listen(GetPaymentMethodContent::class, PreparePayment::class);
-        $dispatcher->listen(ExecutePayment::class, ExecuteMolliePayment::class);
-
-        //listen to Ceres/IO events to register resources
-        $dispatcher->listen(
-            'IO.Resources.Import',
-            function ($resourceContainer) {
-
-                /** @noinspection PhpUndefinedMethodInspection */
-                $resourceContainer->addScriptTemplate('Mollie::Scripts');
-
-                /** @noinspection PhpUndefinedMethodInspection */
-                $resourceContainer->addStyleTemplate('Mollie::Styles');
-            }
-        );
 
         $this->bootEventProcedures();
     }

@@ -38,6 +38,20 @@ class ApiClient
     }
 
     /**
+     * @return array
+     */
+    public function getProfile()
+    {
+        return $this->processApiCall(
+            'Mollie::GetProfile',
+            [
+                'pluginVersion' => self::PLUGIN_VERSION,
+                'apiKey'        => $this->getApiKey()
+            ]
+        );
+    }
+
+    /**
      * @param array $orderData
      * @return array
      */

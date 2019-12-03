@@ -1,1 +1,4 @@
 <script src="{{ plugin_path('Mollie') }}/js/app.js"></script>
+{% if config('Mollie.useMollieComponents') == 'true' %}
+    <script src="https://js.mollie.com/v1/mollie.js"></script>
+{% endif %}

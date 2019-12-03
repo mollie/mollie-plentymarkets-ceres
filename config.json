@@ -4,6 +4,22 @@
     "authentication":{
       "label": "Config.authentication",
       "formFields": {
+        "isFrontendInactive": {
+          "type": "checkBox",
+          "required": false,
+          "label": "Config.frontendInactive",
+          "options": {
+            "defaultValue": "false"
+          }
+        },
+        "useMollieComponents": {
+          "type": "checkBox",
+          "required": false,
+          "label": "Config.useMollieComponents",
+          "options": {
+            "defaultValue": "false"
+          }
+        },
         "isTestMode": {
           "type": "selectBox",
           "required": false,

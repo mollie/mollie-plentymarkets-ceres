@@ -1,0 +1,108 @@
+<div class="container-fluid">
+
+    <h3>{{ label }}</h3>
+
+    <div class="alert alert-danger" id="mollie-cmp-alert" style="display: none">
+    </div>
+
+    <form id="molli-cmp-form" action="/mollie/submit-creditcard" class="row" method="post">
+        <input type="hidden" id="mollie-cmp-token" name="mollie-cc-token" value="">
+        <div class="col-12">
+            <div class="input-unit" id="mollie-cmp-owner">
+                <label>{{ trans('Mollie::UI.cardHolder') }}</label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="input-unit" id="mollie-cmp-number">
+                <label>{{ trans('Mollie::UI.cardNumber') }}</label>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-8">
+            <div class="input-unit" id="mollie-cmp-expiry">
+                <label>{{ trans('Mollie::UI.expiryDate') }}</label>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-4">
+            <div class="input-unit" id="mollie-cmp-verify">
+                <label>{{ trans('Mollie::UI.cvv') }}</label>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <button type="button" class="btn btn-block btn-danger">{{ trans('Mollie::UI.canceled') }}</button>
+        </div>
+
+        <div class="col-12 col-sm-6">
+            <button type="submit" id="mollie-cmp-submit" class="btn btn-block btn-primary">{{ trans('Mollie::UI.proceed') }}</button>
+        </div>
+    </form>
+
+
+</div>
+<script type="text/javascript">
+    $(function () {
+
+        var options = {
+            styles: {
+                base: {
+                    color: '#4D4F4D',
+                    fontSize: '1em;',
+                    backgroundColor: '#fff',
+                    padding: '1.3rem 1rem .3rem 1rem',
+                    lineHeight: '1.2em'
+                },
+                valid: {
+                    color: '#090'
+                },
+                invalid: {
+                    color: '#900'
+                }
+            }
+        };
+
+        var mollie = Mollie('{{ profileId }}', {locale: '{{ locale }}', testmode: {{ testmode }} });
+        var cardHolder = mollie.createComponent('cardHolder', options);
+        var cardNumber = mollie.createComponent('cardNumber', options);
+        var expiryDate = mollie.createComponent('expiryDate', options);
+        var verificationCode = mollie.createComponent('verificationCode', options);
+
+        cardHolder.mount('#mollie-cmp-owner');
+        cardNumber.mount('#mollie-cmp-number');
+        expiryDate.mount('#mollie-cmp-expiry');
+        verificationCode.mount('#mollie-cmp-verify');
+
+        const checkErrorEvent = function(event){
+            if (event.error && event.touched) {
+                $('#mollie-cmp-alert').show();
+                $('#mollie-cmp-alert').html(event.error);
+            } else {
+                $('#mollie-cmp-alert').hide();
+            }
+        };
+
+        //add error listeners
+        cardHolder.addEventListener('change', checkErrorEvent);
+        cardNumber.addEventListener('change', checkErrorEvent);
+        expiryDate.addEventListener('change', checkErrorEvent);
+        verificationCode.addEventListener('change', checkErrorEvent);
+
+        $('#molli-cmp-form').on('submit', async function (event) {
+
+            event.preventDefault();
+
+            const {token, error} = await mollie.createToken();
+            if (error) {
+                $('#mollie-cmp-alert').show();
+                $('#mollie-cmp-alert').html(error.message);
+            } else {
+                $('#mollie-cmp-alert').hide();
+                $('#mollie-cmp-token').val(token);
+
+                // Re-submit form to the server
+                event.currentTarget.submit();
+            }
+        });
+    });
+</script>

@@ -29,7 +29,8 @@ class RouteServiceProvider extends PlentyRouteServiceProvider
             }
         );
 
-        $router->get('mollie/check', PaymentController::class.'@checkPayment');
+        $router->get('mollie/check', PaymentController::class . '@checkPayment');
+        $router->post('mollie/submit-creditcard', PaymentController::class . '@createOrderByCreditCard');
 
         $apiRouter->version(
             ['v1'],

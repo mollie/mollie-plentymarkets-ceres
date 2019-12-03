@@ -58,10 +58,11 @@ class OrderService
 
     /**
      * @param null|int $mopId
+     * @param string $ccToken
      * @return array
      * @throws \Exception
      */
-    public function preparePayment($mopId = null)
+    public function preparePayment($mopId = null, $ccToken = '')
     {
         /** @var TransactionRepositoryContract $transactionRepository */
         $transactionRepository = pluginApp(TransactionRepositoryContract::class);
@@ -78,7 +79,7 @@ class OrderService
                 $result = $this->apiClient->getOrder($transactionId);
                 if (array_key_exists('error', $result)) {
                     //create order
-                    $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['transactionId' => $transactionId]);
+                    $orderData = $this->apiOrderFactory->buildOrder($paymentMethod->paymentKey, ['transactionId' => $transactionId, 'ccToken' => $ccToken]);
                     $result    = $this->apiClient->createOrder($orderData);
 
                     if (array_key_exists('error', $result)) {
