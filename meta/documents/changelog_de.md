@@ -1,5 +1,11 @@
 # Release Notes für Mollie
 
+## 1.3.0
+
+- NEW - Die Zahlungsarten können nun über eine Einstellung für ein PluginSet deaktiviert werden. Dadurch kann man das Plugin nur für Ereignisaktionen nutzen.
+- NEW - Mollie Components wurden für Kreditkarten Zahlungen eingebaut und können über die Einstellungen aktiviert werden.
+
+
 ## 1.2.2
 
 - FIX - Es gab ein Problem mit den Zahlungsvorgang für bestehende Aufträge mit enthaltenen Rabatten auszuführen. Dieses Problem wurde behoben.

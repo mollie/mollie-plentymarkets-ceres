@@ -46,6 +46,8 @@ Mollie requires no minimum costs, no fixed contracts, no hidden costs. At Mollie
 2. Click on the **Mollie** plugin.
 3. Open the **Configuration**.
 4. Add your test- and productive api keys, choose your current active mode and click the **Save** button.
+5. Select **Payments in set webstores inactive** if you want to use only the event procedures in this plugin set.
+6. Select **Use Mollie Components** if you want to use Mollie Components for credit card payments.
 
 ### Payment settings
 

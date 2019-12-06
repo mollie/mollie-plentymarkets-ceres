@@ -1,5 +1,10 @@
 # Release Notes for Mollie
 
+## 1.3.0
+
+- NEW - Payment methods can be deactivated for a specific plugin set by changing the plugin settings. This allows you to only use the Mollie event procedures.
+- NEW - Mollie Components were added for credit card payments and can be activated in the plugin settings.
+
 ## 1.2.2
 
 - FIX - The payment process could not be started for existing orders including a rebate.  This issue is solved now.

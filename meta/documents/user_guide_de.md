@@ -31,6 +31,8 @@ Mollie verlangt keinen Mindestumsatz, keine strikten Verträge, keine versteckte
 2. Klicken Sie auf das **Mollie** Plugin.
 3. Öffnen Sie die **Konfiguration**
 4. Hinterlegen Sie Ihre Test- and Produktiv-API Schlüssel, wählen Sie ihren aktiven Modus aus und **Speichern** Sie die Einstellungen.
+5. Wählen Sie **Zahlungarten in Set-Mandanten inaktiv** wenn Sie nur die Mollie Ereignisaktionen in diesem Plugin-Set verwenden möchten.
+6. Wählen Sie **Mollie Components verwenden** wenn Sie die Mollie Components für Kreditkarten Zahlungen nutzen möchten.
 
 ### Zahlungsarten einstellen
 
