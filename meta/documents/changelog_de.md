@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.3.1
+
+- FIX - Es wurde ein Problem mit der Übermittlung von Card-Tokens behoben.
+
 ## 1.3.0
 
 - NEW - Die Zahlungsarten können nun über eine Einstellung für ein PluginSet deaktiviert werden. Dadurch kann man das Plugin nur für Ereignisaktionen nutzen.

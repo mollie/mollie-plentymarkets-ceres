@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.3.1
+
+- FIX - Card-token issues were fixed which caused an error message in the checkout.
+
 ## 1.3.0
 
 - NEW - Payment methods can be deactivated for a specific plugin set by changing the plugin settings. This allows you to only use the Mollie event procedures.
