@@ -126,7 +126,7 @@ class CheckoutProvider extends OrderFactoryProvider
             'lines'           => [],
         ];
 
-        if (array_key_exists('ccToken', $options)) {
+        if (array_key_exists('ccToken', $options) && !empty($options['ccToken'])) {
             $orderData['payment']['cardToken'] = $options['ccToken'];
         }
 
