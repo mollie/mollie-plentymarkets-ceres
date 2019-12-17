@@ -63,8 +63,15 @@ class TransactionRepository implements TransactionRepositoryContract
         if ($transaction instanceof Transaction) {
             $transaction->orderId = $orderId;
             $this->dataBase->save($transaction);
-            $this->frontendSessionStorageFactory->getPlugin()->setValue(self::SESSION_KEY, '');
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function flushTransaction()
+    {
+        $this->frontendSessionStorageFactory->getPlugin()->setValue(self::SESSION_KEY, '');
     }
 
     /**

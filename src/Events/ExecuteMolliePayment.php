@@ -9,7 +9,6 @@ use Mollie\Traits\CanCheckMollieMethod;
 use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
-use Plenty\Modules\Order\Property\Models\OrderPropertyType;
 use Plenty\Modules\Payment\Events\Checkout\ExecutePayment;
 use Plenty\Modules\Payment\Method\Models\PaymentMethod;
 use Plenty\Plugin\Log\Loggable;
@@ -101,38 +100,11 @@ class ExecuteMolliePayment
                         $event->setValue('Internal Error');
                         return;
                     }
-
-                    //assign order id to transaction
+                    $event->setType('redirectUrl');
+                    $event->setValue($mollieOrder['_links']['checkout']['href']);
+                  
                     $this->transactionRepository->assignOrderId($event->getOrderId());
 
-                    //set mollie id as external order id to order
-                    $this->orderRepository->updateOrder(
-                        [
-                            'properties' => [
-                                ['typeId' => OrderPropertyType::EXTERNAL_ORDER_ID, 'value' => $mollieOrder['id']]
-                            ]
-                        ],
-                        $event->getOrderId()
-                    );
-
-                    //set orderId at mollie
-                    $orderUpdateResponse = $this->apiClient->updateOrderNumber($mollieOrder['id'], (STRING)$event->getOrderId());
-                    $this->getLogger('updateOrderid')->debug(
-                        'Mollie::Debug.mollieOrder',
-                        $orderUpdateResponse
-                    );
-
-                    foreach ($mollieOrder['_embedded']['payments'] as $payment) {
-                        $updatePaymentsResponse = $this->apiClient->updateOrderNumberAtPayment($payment['id'], (STRING)$event->getOrderId());
-                        $this->getLogger('updatePaymentId')->debug(
-                            'Mollie::Debug.mollieOrder',
-                            $updatePaymentsResponse
-                        );
-                    }
-
-                    $this->authHelper->processUnguarded(function () use ($event, $mollieOrder) {
-                        $this->orderUpdateService->setPaid($this->orderRepository->findOrderById($event->getOrderId()), $mollieOrder);
-                    });
                 } else {
                     $this->getLogger('executePayment')->error(
                         'Mollie::Debug.transactionIdDoesNotMatch',

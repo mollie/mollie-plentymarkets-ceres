@@ -21,6 +21,11 @@ interface TransactionRepositoryContract
     public function assignOrderId($orderId);
 
     /**
+     * flush current transaction
+     */
+    public function flushTransaction();
+
+    /**
      * @param string $mollieOrderId
      */
     public function assignMollieOrderId($mollieOrderId);

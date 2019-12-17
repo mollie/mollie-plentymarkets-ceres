@@ -67,8 +67,11 @@ class PreparePayment
                 } else {
                     //forward to mollie
                     $result = $this->orderService->preparePayment($getPaymentMethodContent->getMop());
-                    $getPaymentMethodContent->setType(GetPaymentMethodContent::RETURN_TYPE_REDIRECT_URL);
-                    $getPaymentMethodContent->setValue($result['_links']['checkout']['href']);
+                    /*$getPaymentMethodContent->setType(GetPaymentMethodContent::RETURN_TYPE_REDIRECT_URL);
+                    $getPaymentMethodContent->setValue($result['_links']['checkout']['href']);*/
+
+                    $getPaymentMethodContent->setType(GetPaymentMethodContent::RETURN_TYPE_CONTINUE);
+                    
                 }
 
             } catch (\Exception $exception) {

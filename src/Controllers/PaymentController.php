@@ -2,14 +2,18 @@
 
 namespace Mollie\Controllers;
 
+use Mollie\Api\ApiClient;
 use Mollie\Contracts\TransactionRepositoryContract;
 use Mollie\Helpers\CeresHelper;
+use Mollie\Models\Transaction;
 use Mollie\Services\OrderService;
 use Mollie\Services\OrderUpdateService;
 use Mollie\Traits\CanHandleTransactionId;
 use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Contracts\Checkout;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
+use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
+use Plenty\Modules\Order\Property\Models\OrderPropertyType;
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Http\Request;
 use Plenty\Plugin\Http\Response;
@@ -54,49 +58,94 @@ class PaymentController extends Controller
 
     /**
      * @param FrontendSessionStorageFactoryContract $frontendSessionStorageFactory
+     * @param OrderRepositoryContract $orderRepository
      * @param Response $response
-     * @param CeresHelper $ceresHelper
      * @param Translator $translator
+     * @param CeresHelper $ceresHelper
+     * @param ApiClient $apiClient
+     * @param AuthHelper $authHelper
+     * @param OrderUpdateService $orderUpdateService
      * @param TransactionRepositoryContract $transactionRepository
      * @return mixed
      */
     public function checkPayment(FrontendSessionStorageFactoryContract $frontendSessionStorageFactory,
+                                 OrderRepositoryContract $orderRepository,
                                  Response $response,
-                                 CeresHelper $ceresHelper,
                                  Translator $translator,
+                                 CeresHelper $ceresHelper,
+                                 ApiClient $apiClient,
+                                 AuthHelper $authHelper,
+                                 OrderUpdateService $orderUpdateService,
                                  TransactionRepositoryContract $transactionRepository)
     {
         $lang = $frontendSessionStorageFactory->getLocaleSettings()->language;
 
-        try {
-            if ($transactionRepository->isTransactionPaid()) {
-                //redirect to order creation
-                return $response->redirectTo($lang . '/place-order');
+        $orderId = 0;
+        if ($transactionRepository->openTransactionExists()) {
 
-            } else {
-                //check payment status
+            /** @var Transaction $transaction */
+            $transaction = $transactionRepository->getTransaction();
+            $orderId     = $transaction->orderId;
+            try {
+                if ($transaction->isPaid) {
+
+                    //set mollie id as external order id to order
+                    $orderRepository->updateOrder(
+                        [
+                            'properties' => [
+                                ['typeId' => OrderPropertyType::EXTERNAL_ORDER_ID, 'value' => $transaction->mollieOrderId]
+                            ]
+                        ],
+                        $transaction->orderId
+                    );
+
+                    $mollieOrder = $apiClient->getOrder($transaction->mollieOrderId, true);
+
+                    //set orderId at mollie
+                    $orderUpdateResponse = $apiClient->updateOrderNumber($transaction->mollieOrderId, (STRING)$transaction->orderId);
+                    $this->getLogger('updateOrderid')->debug(
+                        'Mollie::Debug.mollieOrder',
+                        $orderUpdateResponse
+                    );
+
+                    foreach ($mollieOrder['_embedded']['payments'] as $payment) {
+                        $updatePaymentsResponse = $apiClient->updateOrderNumberAtPayment($payment['id'], (STRING)$transaction->orderId);
+                        $this->getLogger('updatePaymentId')->debug(
+                            'Mollie::Debug.mollieOrder',
+                            $updatePaymentsResponse
+                        );
+                    }
+
+                    $authHelper->processUnguarded(function () use ($transaction, $mollieOrder, $orderUpdateService, $orderRepository) {
+                        $orderUpdateService->setPaid($orderRepository->findOrderById($transaction->orderId), $mollieOrder);
+                    });
+
+                } else {
+                    //check payment status
+                    $this->getLogger('checkPayment')->error(
+                        'Mollie::Debug.transactionWasNotPaid',
+                        ['transactionId' => $transactionRepository->getTransactionId()]
+                    );
+
+                    $ceresHelper->pushNotification($translator->trans('Mollie::Errors.notPaid'));
+
+                }
+
+            } catch (\Exception $exception) {
                 $this->getLogger('checkPayment')->error(
-                    'Mollie::Debug.transactionWasNotPaid',
-                    ['transactionId' => $transactionRepository->getTransactionId()]
+                    'Mollie::Debug.transactionIdDoesNotMatch',
+                    [
+                        'transactionId' => $transactionRepository->getTransactionId(),
+                        'session'       => $transactionRepository->getTransactionId()
+                    ]
                 );
 
-                $ceresHelper->pushNotification($translator->trans('Mollie::Errors.notPaid'));
-                return $response->redirectTo($lang . '/checkout');
+
+                $ceresHelper->pushNotification($translator->trans('Mollie::Errors.failed'));
             }
-
-        } catch (\Exception $exception) {
-            $this->getLogger('checkPayment')->error(
-                'Mollie::Debug.transactionIdDoesNotMatch',
-                [
-                    'transactionId' => $transactionRepository->getTransactionId(),
-                    'session'       => $transactionRepository->getTransactionId()
-                ]
-            );
-
-
-            $ceresHelper->pushNotification($translator->trans('Mollie::Errors.failed'));
-            return $response->redirectTo($lang . '/checkout');
         }
+
+        return $response->redirectTo($lang . '/confirmation/' . $orderId);
     }
 
     /**
