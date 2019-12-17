@@ -183,7 +183,7 @@ class PaymentController extends Controller
             $ceresHelper->pushNotification($translator->trans('Mollie::Errors.failed'));
             return $response->redirectTo($lang . '/checkout');
         } else {
-            return $response->redirectTo($result['_links']['checkout']['href']);
+            return $response->redirectTo($lang . '/place-order');
         }
     }
 }
