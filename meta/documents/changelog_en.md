@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.3.2
+
+- UPDATE - The checkout process has been refactored. The payment process will be initialized after the order has been created successfully in plentymarkets.
+
 ## 1.3.1
 
 - FIX - Card-token issues were fixed which caused an error message in the checkout.

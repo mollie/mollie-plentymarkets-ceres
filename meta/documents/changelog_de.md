@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.3.2
+
+- UPDATE - Der Checkout-Prozess wurde überarbeitet. Der Bezahlvorgang wird nun erst eingeleitet, nachdem der Auftrag im plentymarkets System angelegt wurde.
+
 ## 1.3.1
 
 - FIX - Es wurde ein Problem mit der Übermittlung von Card-Tokens behoben.
