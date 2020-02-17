@@ -14,6 +14,7 @@ use Plenty\Modules\Payment\Contracts\PaymentOrderRelationRepositoryContract;
 use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Payment\Models\PaymentProperty;
+use Plenty\Plugin\ConfigRepository;
 use Plenty\Plugin\Log\Loggable;
 
 /**
@@ -50,11 +51,17 @@ class OrderUpdateService
     private $paymentOrderRelationRepository;
 
     /**
+     * @var ConfigRepository
+     */
+    private $configRepository;
+
+    /**
      * OrderUpdateService constructor.
      * @param CommentRepositoryContract $commentRepository
      * @param ApiClient $apiClient
      * @param OrderRepositoryContract $orderRepository
      * @param PaymentRepositoryContract $paymentRepository
+     * @param ConfigRepository $configRepository
      * @param PaymentOrderRelationRepositoryContract $paymentOrderRelationRepository
      */
     public function __construct(
@@ -62,6 +69,7 @@ class OrderUpdateService
         ApiClient $apiClient,
         OrderRepositoryContract $orderRepository,
         PaymentRepositoryContract $paymentRepository,
+        ConfigRepository $configRepository,
         PaymentOrderRelationRepositoryContract $paymentOrderRelationRepository)
     {
         $this->commentRepository              = $commentRepository;
@@ -69,6 +77,7 @@ class OrderUpdateService
         $this->orderRepository                = $orderRepository;
         $this->paymentRepository              = $paymentRepository;
         $this->paymentOrderRelationRepository = $paymentOrderRelationRepository;
+        $this->configRepository               = $configRepository;
     }
 
     /**
@@ -108,14 +117,16 @@ class OrderUpdateService
                 } elseif ($mollieOrder['status'] == 'paid' && $plentyOrder->paymentStatus == 'paid' && $mollieOrder['amountRefunded']['value'] > 0) {
                     //TODO create negative payment
                 } else {
-                    $this->commentRepository->createComment(
-                        [
-                            'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
-                            'referenceValue'      => $plentyOrder->id,
-                            'text'                => 'Payment status update by mollie: ' . $mollieOrder['status'],
-                            'isVisibleForContact' => true
-                        ]
-                    );
+                    if ($this->configRepository->get('Mollie.writeCustomerNotice') == 'true') {
+                        $this->commentRepository->createComment(
+                            [
+                                'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
+                                'referenceValue'      => $plentyOrder->id,
+                                'text'                => 'Payment status update by mollie: ' . $mollieOrder['status'],
+                                'isVisibleForContact' => true
+                            ]
+                        );
+                    }
                 }
             }
         }
@@ -127,14 +138,16 @@ class OrderUpdateService
      */
     public function setPaid(Order $plentyOrder, $mollieOrder)
     {
-        $this->commentRepository->createComment(
-            [
-                'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
-                'referenceValue'      => $plentyOrder->id,
-                'text'                => 'Order was authorized by mollie to be shipped',
-                'isVisibleForContact' => true
-            ]
-        );
+        if ($this->configRepository->get('Mollie.writeCustomerNotice') == 'true') {
+            $this->commentRepository->createComment(
+                [
+                    'referenceType'       => Comment::REFERENCE_TYPE_ORDER,
+                    'referenceValue'      => $plentyOrder->id,
+                    'text'                => 'Order was authorized by mollie to be shipped',
+                    'isVisibleForContact' => true
+                ]
+            );
+        }
 
         $paymentObject = $this->createPaymentObject($plentyOrder, $mollieOrder);
         $this->getLogger('payment')->debug('Mollie::Debug.webhook', $paymentObject);

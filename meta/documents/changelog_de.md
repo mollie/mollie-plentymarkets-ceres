@@ -1,5 +1,11 @@
 # Release Notes für Mollie
 
+## 1.3.3
+
+- UPDATE - Die Anlage von Auftragsnotizen kann nun durch eine neue Einstellung unterbunden werden.
+- FIX - Die Berechnung von Netto-Beträgen bei Ausfuhrlieferungen wurde korrigiert.
+- FIX - Rundungsdifferenzen bei der Berechnung von Netto-Beträgen wurden korrigiert.
+
 ## 1.3.2
 
 - UPDATE - Der Checkout-Prozess wurde überarbeitet. Der Bezahlvorgang wird nun erst eingeleitet, nachdem der Auftrag im plentymarkets System angelegt wurde.

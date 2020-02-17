@@ -84,10 +84,15 @@ class CheckoutProvider extends OrderFactoryProvider
             }
         }
 
+        $isNet = false;
+        if (!count($vatService->getCurrentTotalVats())) {
+            $isNet = true;
+        }
+
         $orderData = [
             'amount'          => [
                 'currency' => $basket->currency,
-                'value'    => number_format($basket->basketAmount, 2, '.', ''),
+                'value'    => number_format($isNet ? $basket->basketAmountNet : $basket->basketAmount, 2, '.', ''),
             ],
             'billingAddress'  => [
                 'organizationName' => $billingAddress->companyName,
@@ -139,10 +144,6 @@ class CheckoutProvider extends OrderFactoryProvider
             $orderData['consumerDateOfBirth'] = date('Y-m-d', $billingAddress->birthday);
         }
 
-        $isNet = false;
-        if (!count($vatService->getCurrentTotalVats())) {
-            $isNet = true;
-        }
 
         $vatRate = 0.00;
         foreach ($basket->basketItems as $basketItem) {
@@ -260,6 +261,24 @@ class CheckoutProvider extends OrderFactoryProvider
                     'value'    => $isNet ? '0.00' : number_format(($basket->couponDiscount * ($vatRate / (100.0 + $vatRate))), 2, '.', ''),
                 ]
             ];
+        }
+
+        //correct amounts
+        $amountsTotal = 0.00;
+        foreach ($orderData['lines'] as $orderLineData) {
+            $amountsTotal += $orderLineData['totalAmount']['value'];
+        }
+
+        if ($amountsTotal != $orderData['amount']['value']) {
+            $diff = $amountsTotal - $orderData['amount']['value'];
+            if ($diff <= 0.03) {
+                $orderData['lines'][0]['totalAmount']['value'] = number_format(
+                    $orderData['lines'][0]['totalAmount']['value'] - $diff,
+                    2,
+                    '.',
+                    ''
+                );
+            }
         }
 
         return $orderData;

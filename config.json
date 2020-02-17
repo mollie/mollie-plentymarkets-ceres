@@ -20,6 +20,14 @@
             "defaultValue": "false"
           }
         },
+        "writeCustomerNotice": {
+          "type": "checkBox",
+          "required": false,
+          "label": "Config.writeCustomerNotice",
+          "options": {
+            "defaultValue": "true"
+          }
+        },
         "isTestMode": {
           "type": "selectBox",
           "required": false,

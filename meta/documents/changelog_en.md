@@ -1,5 +1,11 @@
 # Release Notes for Mollie
 
+## 1.3.3
+
+- UPDATE - The creation of order comments can now be deactivated by a new plugin configuration.
+- FIX - The calculation of net amounts at export deliveries has been fixed.
+- FIX - An issue with rounding differences at the net amounts calculation has been fixed.
+
 ## 1.3.2
 
 - UPDATE - The checkout process has been refactored. The payment process will be initialized after the order has been created successfully in plentymarkets.
