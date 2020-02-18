@@ -89,4 +89,15 @@ abstract class OrderFactoryProvider
 
         return $domain;
     }
+
+    /**
+     * @param float $grossAmount
+     * @param float $vatRate
+     * @param int $quantity
+     * @return string
+     */
+    protected function calculateVatAmount($grossAmount, $vatRate, $quantity = 1)
+    {
+        return number_format(($grossAmount * $quantity) * ($vatRate / (100.0 + $vatRate)), 2, '.', '');
+    }
 }

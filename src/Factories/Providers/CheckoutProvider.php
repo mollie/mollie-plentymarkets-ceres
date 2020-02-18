@@ -4,6 +4,7 @@ namespace Mollie\Factories\Providers;
 
 use Mollie\Contracts\OrderFactoryProvider;
 use Mollie\Helpers\PhoneHelper;
+use Mollie\Traits\CanCorrectAmountDifferences;
 use Plenty\Modules\Account\Address\Contracts\AddressRepositoryContract;
 use Plenty\Modules\Account\Address\Models\Address;
 use Plenty\Modules\Account\Contact\Contracts\ContactRepositoryContract;
@@ -21,6 +22,8 @@ use Plenty\Modules\Item\Item\Contracts\ItemRepositoryContract;
  */
 class CheckoutProvider extends OrderFactoryProvider
 {
+    use CanCorrectAmountDifferences;
+
     /**
      * @param string $method
      * @param array $options
@@ -188,7 +191,7 @@ class CheckoutProvider extends OrderFactoryProvider
                     ],
                     'vatAmount'      => [
                         'currency' => $basket->currency,
-                        'value'    => $isNet ? '0.00' : number_format(($basketItem->price * ($basketItem->vat / (100.0 + $basketItem->vat))) * $basketItem->quantity, 2, '.', ''),
+                        'value'    => $isNet ? '0.00' : $this->calculateVatAmount($basketItem->price, $basketItem->vat, $basketItem->quantity ),
                     ]
                 ];
 
@@ -224,7 +227,7 @@ class CheckoutProvider extends OrderFactoryProvider
             ],
             'vatAmount'      => [
                 'currency' => $basket->currency,
-                'value'    => $isNet ? '0.00' : number_format($basket->shippingAmount - $basket->shippingAmountNet, 2, '.', ''),
+                'value'    => $isNet ? '0.00' : $this->calculateVatAmount($basket->shippingAmount, $vatRate),
             ]
         ];
 
@@ -258,7 +261,7 @@ class CheckoutProvider extends OrderFactoryProvider
                 ],
                 'vatAmount'      => [
                     'currency' => $basket->currency,
-                    'value'    => $isNet ? '0.00' : number_format(($basket->couponDiscount * ($vatRate / (100.0 + $vatRate))), 2, '.', ''),
+                    'value'    => $isNet ? '0.00' : $this->calculateVatAmount($basket->couponDiscount, $vatRate),
                 ]
             ];
         }
@@ -269,17 +272,10 @@ class CheckoutProvider extends OrderFactoryProvider
             $amountsTotal += $orderLineData['totalAmount']['value'];
         }
 
-        if ($amountsTotal != $orderData['amount']['value']) {
-            $diff = $amountsTotal - $orderData['amount']['value'];
-            if ($diff <= 0.03) {
-                $orderData['lines'][0]['totalAmount']['value'] = number_format(
-                    $orderData['lines'][0]['totalAmount']['value'] - $diff,
-                    2,
-                    '.',
-                    ''
-                );
-            }
-        }
+        $orderData['lines'][0]['totalAmount']['value'] = $this->correctAmount(
+            $amountsTotal,
+            $orderData['lines'][0]['totalAmount']['value']
+        );
 
         return $orderData;
     }
