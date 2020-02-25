@@ -1,13 +1,14 @@
 # Mollie plugin für plentymarkets
 
-Mit Mollie können Sie mit Hilfe einer einzelnen Integration Ihren Kundenstamm international mit Hilfe von allen großen Zahlungsarten erweitern. Sie müssen sich nicht wochenlang mit Papierkram oder Sicherheits-Prüfungen herumschlagen. 
+Mit Mollie können Sie mit Hilfe einer einzelnen Integration Ihren Kundenstamm international mit Hilfe von allen großen Zahlungsarten erweitern. Sie müssen sich nicht wochenlang mit Papierkram oder Sicherheits-Prüfungen herumschlagen.
 
-Mollie verlangt keinen Mindestumsatz, keine strikten Verträge, keine versteckte Kosten. Bei Mollie zahlen Sie nur für erfolgreiche Transaktionen. Mehr Infos über dieses Preismodell finden Sie [hier](https://www.mollie.com/en/pricing/). Sie können sich über folgenden Link [registrieren](https://www.mollie.com/dashboard/signup/5543454?lang=de). Integrieren Sie alle großen Zahlungsarten in Ihr plentymarkets Frontend.
-   
+Mollie verlangt keinen Mindestumsatz, keine strikten Verträge, keine versteckte Kosten. Bei Mollie zahlen Sie nur für erfolgreiche Transaktionen. Mehr Infos über dieses Preismodell finden Sie [hier](https://www.mollie.com/de/pricing/). Sie können sich über folgenden Link [registrieren](https://www.mollie.com/dashboard/signup/5543454?lang=de). Integrieren Sie alle großen Zahlungsarten in Ihr plentymarkets Frontend.
+
 
 ## Unterstützte Zahlungsarten von Mollie ##
+- ApplePay (NEU!)
 - iDEAL
-- Creditcard
+- Kreditkarte: Visa, Mastercard, American Express
 - CartaSi & Cartes Bancaires
 - Bancontact
 - Belfius Pay Button
@@ -17,11 +18,12 @@ Mollie verlangt keinen Mindestumsatz, keine strikten Verträge, keine versteckte
 - EPS
 - Giropay
 - PayPal
-- Bitcoin
+- Postepay (IT)
+- Przelewy24 (PL)
 - Paysafecard
 - Klarna
 - SEPA bank transfer
-- Giftcards 
+- Giftcards
 
 ## Einrichtung
 
@@ -199,4 +201,3 @@ Die Zahlungsart wird nun in Ihrem plentymarkets System installiert. Sie ist nun 
       Tab. 4: Ereignisaktion "Gutschrift bei mollie anmelden"
    </caption>
 </table>
-
