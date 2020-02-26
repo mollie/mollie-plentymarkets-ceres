@@ -6,9 +6,9 @@ Mollie requires no minimum costs, no fixed contracts, no hidden costs. At Mollie
 
 
 ## Supported Mollie Payment Methods ##
-- ApplePay (NEU!)
+- ApplePay (NEW!)
 - iDEAL
-- Kreditkarte: Visa, Mastercard, American Express
+- Creditcard: Visa, Mastercard, American Express
 - CartaSi & Cartes Bancaires
 - Bancontact
 - Belfius Pay Button

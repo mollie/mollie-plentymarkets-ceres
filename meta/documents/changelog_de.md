@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.3.5 (26.02.2020)
+
+- UserGuide und Vorschaubilder aktualisiert
+
 ## 1.3.4 (18.02.2020)
 
 - HOT-FIX - Mehrwertsteuer Berechnung
