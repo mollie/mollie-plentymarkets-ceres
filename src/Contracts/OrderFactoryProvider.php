@@ -94,10 +94,11 @@ abstract class OrderFactoryProvider
      * @param float $grossAmount
      * @param float $vatRate
      * @param int $quantity
+     * @param float $discount
      * @return string
      */
-    protected function calculateVatAmount($grossAmount, $vatRate, $quantity = 1)
+    protected function calculateVatAmount($grossAmount, $vatRate, $quantity = 1, $discount = 0.00)
     {
-        return number_format(($grossAmount * $quantity) * ($vatRate / (100.0 + $vatRate)), 2, '.', '');
+        return number_format((($grossAmount-$discount) * $quantity) * ($vatRate / (100.0 + $vatRate)), 2, '.', '');
     }
 }

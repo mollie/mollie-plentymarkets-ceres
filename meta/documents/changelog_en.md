@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.3.6 (20.04.2020)
+
+- FIX - Calculation of rabate amounts during the checkout process.
+
 ## 1.3.5 (26.02.2020)
 
 - UserGuide and Preview Images updated

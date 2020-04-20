@@ -83,7 +83,7 @@ class OrderService
                     $result    = $this->apiClient->createOrder($orderData);
 
                     if (array_key_exists('error', $result)) {
-                        $this->getLogger('creatingOrder')->error('Mollie::Debug.createOrderIssue', $result);
+                        $this->getLogger('creatingOrder')->error('Mollie::Debug.createOrderIssue', ['request' => $orderData??[], 'result' => $result]);
                         throw new \Exception($result['error']);
                     }
                 }
@@ -140,7 +140,7 @@ class OrderService
                     }
 
                     if (array_key_exists('error', $result)) {
-                        $this->getLogger('creatingOrder')->error('Mollie::Debug.createOrderIssue', $result);
+                        $this->getLogger('creatingOrder')->error('Mollie::Debug.createOrderIssue', ['request' => $orderData??[], 'result' => $result]);
                         throw new \Exception($result['error']);
                     } else {
                         $this->orderRepository->updateOrder(

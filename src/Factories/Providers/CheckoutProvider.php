@@ -152,9 +152,9 @@ class CheckoutProvider extends OrderFactoryProvider
         foreach ($basket->basketItems as $basketItem) {
             if ($basketItem instanceof BasketItem) {
 
-                $basketItemPrice = $basketItem->price;
+                $basketItemPrice = $basketItem->price + $basketItem->attributeTotalMarkup;
                 if ($isNet) {
-                    $basketItemPrice = round($basketItem->price * 100 / (100.0 + $basketItem->vat), 2);
+                    $basketItemPrice = round($basketItemPrice * 100 / (100.0 + $basketItem->vat), 2);
                 }
 
                 /** @var \Plenty\Modules\Item\Item\Models\Item $item */
@@ -183,7 +183,7 @@ class CheckoutProvider extends OrderFactoryProvider
                     ],
                     'totalAmount'    => [
                         'currency' => $basket->currency,
-                        'value'    => number_format($basketItemPrice * $basketItem->quantity, 2, '.', ''),
+                        'value'    => number_format(($basketItemPrice-$discount) * $basketItem->quantity, 2, '.', ''),
                     ],
                     'discountAmount' => [
                         'currency' => $basket->currency,
@@ -191,7 +191,7 @@ class CheckoutProvider extends OrderFactoryProvider
                     ],
                     'vatAmount'      => [
                         'currency' => $basket->currency,
-                        'value'    => $isNet ? '0.00' : $this->calculateVatAmount($basketItem->price, $basketItem->vat, $basketItem->quantity ),
+                        'value'    => $isNet ? '0.00' : $this->calculateVatAmount($basketItemPrice, $basketItem->vat, $basketItem->quantity, $discount),
                     ]
                 ];
 
@@ -272,10 +272,22 @@ class CheckoutProvider extends OrderFactoryProvider
             $amountsTotal += $orderLineData['totalAmount']['value'];
         }
 
+        $oldAmount                                     = $orderData['lines'][0]['totalAmount']['value'];
         $orderData['lines'][0]['totalAmount']['value'] = $this->correctAmount(
             $amountsTotal,
+            $orderData['amount']['value'],
             $orderData['lines'][0]['totalAmount']['value']
         );
+
+        if ($oldAmount != $orderData['lines'][0]['totalAmount']['value'] && !$isNet) {
+
+            //recalculate vat Amount because the total has changed
+            $orderData['lines'][0]['totalAmount']['vatAmount'] = $this->calculateVatAmount(
+                $orderData['lines'][0]['totalAmount']['value'],
+                $orderData['lines'][0]['vatRate'],
+                $orderData['lines'][0]['quantity']
+            );
+        }
 
         return $orderData;
     }
