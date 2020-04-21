@@ -1,5 +1,9 @@
 # Release Notes for Mollie
 
+## 1.3.7 (21.04.2020)
+
+- FIX - Recalculation of vat amounts after amount corrections.
+
 ## 1.3.6 (20.04.2020)
 
 - FIX - Calculation of rabate amounts during the checkout process.

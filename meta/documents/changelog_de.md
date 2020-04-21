@@ -1,5 +1,9 @@
 # Release Notes für Mollie
 
+## 1.3.7 (21.04.2020)
+
+- FIX - Neuberechnung der Steuerbeträge nach Betragskorrekturen. 
+
 ## 1.3.6 (20.04.2020)
 
 - FIX - Betragsberechnung von Rabatten wurden im Checkout korrigiert. 

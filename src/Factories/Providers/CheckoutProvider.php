@@ -282,7 +282,7 @@ class CheckoutProvider extends OrderFactoryProvider
         if ($oldAmount != $orderData['lines'][0]['totalAmount']['value'] && !$isNet) {
 
             //recalculate vat Amount because the total has changed
-            $orderData['lines'][0]['totalAmount']['vatAmount'] = $this->calculateVatAmount(
+            $orderData['lines'][0]['vatAmount']['value'] = $this->calculateVatAmount(
                 $orderData['lines'][0]['totalAmount']['value'],
                 $orderData['lines'][0]['vatRate'],
                 $orderData['lines'][0]['quantity']
